@@ -3,66 +3,177 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import firebase from "firebase";
 import { storage } from "./firebase";
-import CloseButton from "./Components/CloseButton";
+import plateImg from "./images/plateImg.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 
 const AddNewContainer = styled.div`
   background: white;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
-  height: 100%;
-  overflow: scroll;
-  border-radius: 4px;
-  box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.12);
-  border: solid 1px grey;
+  height: auto;
   contain: content;
-  padding: 0 25px;
-  form {
-    border: 2px solid blue;
-    padding: 75px 0;
-  }
+  overflow-x: scroll;
   @media (min-width: 1025px) {
-    margin: 50px;
     width: 80%;
     max-width: 700px;
   }
 `;
 
-const InputContainer = styled.div`
-  margin: 20px;
-  border: 2px solid red;
-  contain: content;
-  label {
-  }
-  input {
-    width: 98%;
-    font-size: 1rem;
-  }
-  textarea {
-    width: 98%;
-    height: 5rem;
-    font-size: 1rem;
+const InnerContainer = styled.div`
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const PlateContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  justify-content: center;
+  margin-top: 12.5vh;
+  img {
+    width: 90vw;
+    height: auto;
+    max-width: 600px;
   }
 `;
 
-const SaveButton = styled.button`
-  margin: 25px;
-  padding: 10px;
-  width: 100px;
-  border-radius: 4px;
-  cursor: pointer;
-  align-self: center;
+const TitleInput = styled.div`
+  margin: 32px 0;
+  & input {
+    font-size: 2rem;
+    color: gray;
+    background-color: #faf8f8;
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    padding: 5px;
+    width: calc(100vw - 140px);
+    &:focus::placeholder {
+      color: transparent;
+    }
+  }
+`;
+
+const DescriptionNotesInput = styled.div`
+  contain: content;
+  margin: 10px 0px;
   font-size: 1rem;
+  width: 100vw;
+  input {
+    font-size: 1rem;
+    border: none;
+    color: gray;
+    background-color: #faf8f8;
+    border-radius: 4px;
+    height: auto;
+    margin: 0 15px;
+    width: -webkit-fill-available;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: scroll;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    &:focus::placeholder {
+      color: transparent;
+    }
+  }
+  textarea {
+    height: 5rem;
+    font-size: 1rem;
+    border: none;
+    color: gray;
+    margin: 0 15px;
+    width: -webkit-fill-available;
+    background-color: #faf8f8;
+    border-radius: 4px;
+    overflow-y: scroll;
+    padding: 5px;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    &:focus::placeholder {
+      color: transparent;
+    }
+  }
+`;
+
+const SaveButton = styled.div`
+  cursor: pointer;
+  font-size: 1rem;
+  position: fixed;
+  right: 5px;
+  top: 5px;
+`;
+
+const CancelButton = styled.div`
+  cursor: pointer;
+  font-size: 1rem;
+  position: fixed;
+  left: 5px;
+  top: 5px;
+`;
+
+const DeleteIconContainer = styled.div`
+  color: red;
+  margin-bottom: 15px;
 `;
 
 const ImageContainer = styled.div`
-  height: 500px;
-  width: 500px;
+  height: 200px;
+  width: 200px;
+  border-radius: 50%;
   contain: content;
+  position: absolute;
   img {
-    height: 500px;
-    width: 500px;
+    height: 200px;
+    width: 200px;
+    object-fit: cover;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
   }
+`;
+
+const ImageInput = styled.div`
+  label {
+    position: absolute;
+    top: 45%;
+    left: 35%;
+    cursor: pointer;
+  }
+  .inputfile {
+    position: absolute;
+    top: 45%;
+    left: 35%;
+    border: none;
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    &:focus {
+      outline: none;
+    }
+  }
+`;
+
+const AddImageButton = styled.div`
+  cursor: pointer;
+  position: absolute;
 `;
 
 const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
@@ -73,6 +184,8 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
     notes: meal ? meal.mealData.notes : "",
     imgUrl: meal ? meal.mealData.imgUrl : ""
   });
+
+  console.log(newMealData.imgUrl);
 
   const onSave = () => {
     const db = firebase.firestore();
@@ -144,74 +257,90 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
 
   return (
     <AddNewContainer>
-      <CloseButton setMode={setMode} page={"home"} />
-      <form onSubmit={handleFireBaseImageUpload}>
-        <InputContainer>
-          <label>Image</label>
-          <br />
-          <input
-            type="file"
-            id="image"
-            name="image"
-            onChange={handleImageAsFile}
-          ></input>
-        </InputContainer>
-        <button>Add Image</button>
-      </form>
-      {imageAsFile && newMealData.imgUrl && (
-        <ImageContainer>
-          <img src={newMealData.imgUrl} />
-        </ImageContainer>
-      )}
-      <form>
-        <InputContainer>
-          <label>Title</label>
-          <br />
-          <input
-            type="text"
-            id="title"
-            name="title"
-            onChange={event => handleChange("title", event.target.value)}
-            defaultValue={newMealData.title}
-          ></input>
-        </InputContainer>
-        <InputContainer>
-          <label>Description</label>
-          <br />
-          <input
-            type="text"
-            id="description"
-            name="description"
-            onChange={event => handleChange("description", event.target.value)}
-            defaultValue={newMealData.description}
-          ></input>
-        </InputContainer>
-        <InputContainer>
-          <label>Notes</label>
-          <br />
-          <textarea
-            type="text"
-            id="notes"
-            name="notes"
-            onChange={event => handleChange("notes", event.target.value)}
-            defaultValue={newMealData.notes}
-          ></textarea>
-        </InputContainer>
-      </form>
-      {mode === "add" && (
-        <SaveButton type="submit" value="Save" onClick={onSave}>
-          Save
-        </SaveButton>
-      )}
+      <InnerContainer>
+        {mode === "add" && (
+          <>
+            <SaveButton onClick={onSave}>Save</SaveButton>
+            <CancelButton onClick={() => setMode("home")}>Cancel</CancelButton>
+          </>
+        )}
+        {mode === "edit" && (
+          <>
+            <SaveButton onClick={onUpdate}>Update</SaveButton>
+            <CancelButton onClick={() => setMode("view")}>Cancel</CancelButton>
+          </>
+        )}
+        <form>
+          <TitleInput>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              onChange={event => handleChange("title", event.target.value)}
+              defaultValue={newMealData.title === "" ? "" : newMealData.title}
+              placeholder={"Meal"}
+            ></input>
+          </TitleInput>
+        </form>
+        <PlateContainer>
+          <img src={plateImg} />
+          {!imageAsFile && (
+            <ImageInput>
+              <label for="image">Choose an Image</label>
+              <input
+                type="file"
+                id="image"
+                name="image"
+                className="inputfile"
+                onChange={handleImageAsFile}
+              ></input>
+            </ImageInput>
+          )}
+          {imageAsFile && (
+            <AddImageButton onClick={e => handleFireBaseImageUpload(e)}>
+              Save
+            </AddImageButton>
+          )}
+          {/* {imageAsFile && newMealData.imgUrl && ( */}
+          <ImageContainer>
+            {/* <img src={newMealData.imgUrl} /> */}
+            <img src="https://firebasestorage.googleapis.com/v0/b/meal-app-647ba.appspot.com/o/images%2FIMG_0001.jpeg?alt=media&token=082a5fb9-2794-45f2-8cf9-a55454a3d2bf" />
+          </ImageContainer>
+          {/* )} */}
+        </PlateContainer>
+        <form>
+          <DescriptionNotesInput>
+            <input
+              type="text"
+              id="description"
+              name="description"
+              onChange={event =>
+                handleChange("description", event.target.value)
+              }
+              defaultValue={
+                newMealData.description === "" ? "" : newMealData.description
+              }
+              placeholder={"Description"}
+            ></input>
+          </DescriptionNotesInput>
+          <DescriptionNotesInput>
+            <textarea
+              type="text"
+              id="notes"
+              name="notes"
+              onChange={event => handleChange("notes", event.target.value)}
+              defaultValue={
+                newMealData.notes === "" ? "" : setNewMealData.description
+              }
+              placeholder={"Notes"}
+            ></textarea>
+          </DescriptionNotesInput>
+        </form>
+      </InnerContainer>
       {mode === "edit" && (
-        <>
-          <SaveButton onClick={onUpdate} type="submit" value="Update">
-            Update
-          </SaveButton>
-          <SaveButton onClick={onDelete} type="submit" value="Delete">
-            Delete
-          </SaveButton>
-        </>
+        <DeleteIconContainer>
+          <FontAwesomeIcon icon={faTrashAlt} onClick={() => onDelete()} />
+        </DeleteIconContainer>
       )}
     </AddNewContainer>
   );

@@ -7,7 +7,6 @@ import theme from "./theme";
 import firebase from "./firebase";
 
 const OuterPageContainer = styled.div`
-  height: 100vh;
   width: 100vw;
   display: flex;
   justify-content: center;
@@ -17,7 +16,7 @@ const OuterPageContainer = styled.div`
 `;
 
 function App() {
-  const [mode, setMode] = useState("view");
+  const [mode, setMode] = useState("add");
   const [meals, setMeals] = useState([]);
   const [meal, setMeal] = useState();
   const [oneMealId, setOneMealId] = useState();
