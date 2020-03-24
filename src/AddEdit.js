@@ -5,18 +5,23 @@ import firebase from "firebase";
 import { storage } from "./firebase";
 import plateImg from "./images/plateImg.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
+import { faImage } from "@fortawesome/free-regular-svg-icons";
+import { checkValid } from "./helpers/functions.js";
+import useWindowDimensions from "./helpers/useWindowDimensions";
 
 const AddNewContainer = styled.div`
   background: white;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
   width: 100%;
   height: auto;
   contain: content;
-  overflow-x: scroll;
+  overflow: scroll;
+  &::-webkit-scrollbar {
+    display: none;
+  }
   @media (min-width: 1025px) {
     width: 80%;
     max-width: 700px;
@@ -24,11 +29,11 @@ const AddNewContainer = styled.div`
 `;
 
 const InnerContainer = styled.div`
-  height: 100vh;
+  height: ${props => props.height}px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
+  justify-content: flex-start;
 `;
 
 const PlateContainer = styled.div`
@@ -37,7 +42,6 @@ const PlateContainer = styled.div`
   align-items: center;
   position: relative;
   justify-content: center;
-  margin-top: 12.5vh;
   img {
     width: 90vw;
     height: auto;
@@ -46,10 +50,13 @@ const PlateContainer = styled.div`
 `;
 
 const TitleInput = styled.div`
-  margin: 32px 0;
-  & input {
+  margin: 32px 0 15px 0;
+  width: 100%;
+  height: 90px;
+  & textarea {
     font-size: 2rem;
     color: gray;
+    font-family: "Helvetica Neue";
     background-color: #faf8f8;
     border: none;
     border-radius: 4px;
@@ -59,7 +66,9 @@ const TitleInput = styled.div`
     -webkit-box-orient: vertical;
     overflow: hidden;
     padding: 5px;
-    width: calc(100vw - 140px);
+    margin: 0 15px;
+    width: -webkit-fill-available;
+    resize: none;
     &:focus::placeholder {
       color: transparent;
     }
@@ -68,7 +77,7 @@ const TitleInput = styled.div`
 
 const DescriptionNotesInput = styled.div`
   contain: content;
-  margin: 10px 0px;
+  margin: 15px 0;
   font-size: 1rem;
   width: 100vw;
   input {
@@ -78,7 +87,7 @@ const DescriptionNotesInput = styled.div`
     background-color: #faf8f8;
     border-radius: 4px;
     height: auto;
-    margin: 0 15px;
+    margin: 0 15px 15px 15px;
     width: -webkit-fill-available;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -100,8 +109,8 @@ const DescriptionNotesInput = styled.div`
     width: -webkit-fill-available;
     background-color: #faf8f8;
     border-radius: 4px;
-    overflow-y: scroll;
     padding: 5px;
+    overflow-y: scroll;
     &::-webkit-scrollbar {
       display: none;
     }
@@ -145,20 +154,22 @@ const ImageContainer = styled.div`
     display: block;
     margin-left: auto;
     margin-right: auto;
+    border-radius: 50%;
   }
 `;
 
 const ImageInput = styled.div`
   label {
     position: absolute;
-    top: 45%;
-    left: 35%;
+    top: 42%;
+    left: 42%;
     cursor: pointer;
+    font-size: 40px;
   }
   .inputfile {
     position: absolute;
-    top: 45%;
-    left: 35%;
+    top: 42%;
+    left: 42%;
     border: none;
     width: 0.1px;
     height: 0.1px;
@@ -171,26 +182,22 @@ const ImageInput = styled.div`
   }
 `;
 
-const AddImageButton = styled.div`
-  cursor: pointer;
-  position: absolute;
-`;
-
 const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
   const [imageAsFile, setImageAsFile] = useState("");
-  const [newMealData, setNewMealData] = useState({
-    title: meal ? meal.mealData.title : "",
-    description: meal ? meal.mealData.description : "",
-    notes: meal ? meal.mealData.notes : "",
-    imgUrl: meal ? meal.mealData.imgUrl : ""
+  const [mealData, setMealData] = useState({
+    title: checkValid(meal, "title") ? meal.mealData.title : "",
+    description: checkValid(meal, "description")
+      ? meal.mealData.description
+      : "",
+    notes: checkValid(meal, "notes") ? meal.mealData.notes : "",
+    imgUrl: checkValid(meal, "imgUrl") ? meal.mealData.imgUrl : ""
   });
-
-  console.log(newMealData.imgUrl);
+  const { height, width } = useWindowDimensions();
 
   const onSave = () => {
     const db = firebase.firestore();
-    db.collection("meals").add({ newMealData });
-    setMeal({ mealData: newMealData });
+    db.collection("meals").add({ mealData });
+    setMeal({ mealData: mealData });
     setMode("view");
   };
 
@@ -198,9 +205,23 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
     const db = firebase.firestore();
     db.collection("meals")
       .doc(oneMealId)
-      .set({ newMealData });
-    setMeal({ mealData: newMealData });
+      .set({ mealData });
+    setMeal({ mealData: mealData });
     setMode("view");
+  };
+
+  const handleFireBaseImageDelete = () => {
+    if (checkValid(meal, "imgUrl")) {
+      let httpsRef = storage.refFromURL(checkValid(meal, "imgUrl"));
+      httpsRef
+        .delete()
+        .then(function() {
+          console.log("file deleted");
+        })
+        .catch(function(error) {
+          console.log("error deleting file");
+        });
+    }
   };
 
   const onDelete = () => {
@@ -208,16 +229,14 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
     db.collection("meals")
       .doc(oneMealId)
       .delete();
+    handleFireBaseImageDelete();
     setMode("home");
-  };
-
-  const handleImageAsFile = e => {
-    const image = e.target.files[0];
-    setImageAsFile(imageFile => image);
   };
 
   const handleFireBaseImageUpload = e => {
     e.preventDefault();
+    const imageAsFile = e.target.files[0];
+    setImageAsFile(imageFile => imageAsFile);
     if (imageAsFile === "") {
       console.error(`not an image, the image file is a ${typeof imageAsFile}`);
     }
@@ -239,7 +258,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
           .child(imageAsFile.name)
           .getDownloadURL()
           .then(fireBaseUrl => {
-            setNewMealData(prevObject => ({
+            setMealData(prevObject => ({
               ...prevObject,
               imgUrl: fireBaseUrl
             }));
@@ -249,15 +268,15 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
   };
 
   const handleChange = (field, value) => {
-    setNewMealData(newMealData => ({
-      ...newMealData,
+    setMealData(mealData => ({
+      ...mealData,
       [field]: value
     }));
   };
 
   return (
     <AddNewContainer>
-      <InnerContainer>
+      <InnerContainer height={height}>
         {mode === "add" && (
           <>
             <SaveButton onClick={onSave}>Save</SaveButton>
@@ -270,43 +289,38 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
             <CancelButton onClick={() => setMode("view")}>Cancel</CancelButton>
           </>
         )}
-        <form>
-          <TitleInput>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              onChange={event => handleChange("title", event.target.value)}
-              defaultValue={newMealData.title === "" ? "" : newMealData.title}
-              placeholder={"Meal"}
-            ></input>
-          </TitleInput>
-        </form>
+        <TitleInput>
+          <textarea
+            type="text"
+            id="title"
+            name="title"
+            rows="2"
+            onChange={event => handleChange("title", event.target.value)}
+            defaultValue={mealData.title === "" ? "" : mealData.title}
+            placeholder={"Meal"}
+          ></textarea>
+        </TitleInput>
         <PlateContainer>
-          <img src={plateImg} />
+          <img src={plateImg} alt="plate" />
           {!imageAsFile && (
             <ImageInput>
-              <label for="image">Choose an Image</label>
+              <label htmlFor="image">
+                <FontAwesomeIcon icon={faImage} />
+              </label>
               <input
                 type="file"
                 id="image"
                 name="image"
                 className="inputfile"
-                onChange={handleImageAsFile}
+                onChange={handleFireBaseImageUpload}
               ></input>
             </ImageInput>
           )}
-          {imageAsFile && (
-            <AddImageButton onClick={e => handleFireBaseImageUpload(e)}>
-              Save
-            </AddImageButton>
+          {mealData.imgUrl && (
+            <ImageContainer>
+              <img src={mealData.imgUrl} alt="food" />
+            </ImageContainer>
           )}
-          {/* {imageAsFile && newMealData.imgUrl && ( */}
-          <ImageContainer>
-            {/* <img src={newMealData.imgUrl} /> */}
-            <img src="https://firebasestorage.googleapis.com/v0/b/meal-app-647ba.appspot.com/o/images%2FIMG_0001.jpeg?alt=media&token=082a5fb9-2794-45f2-8cf9-a55454a3d2bf" />
-          </ImageContainer>
-          {/* )} */}
         </PlateContainer>
         <form>
           <DescriptionNotesInput>
@@ -318,22 +332,18 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
                 handleChange("description", event.target.value)
               }
               defaultValue={
-                newMealData.description === "" ? "" : newMealData.description
+                mealData.description === "" ? "" : mealData.description
               }
               placeholder={"Description"}
-            ></input>
-          </DescriptionNotesInput>
-          <DescriptionNotesInput>
+            />
             <textarea
               type="text"
               id="notes"
               name="notes"
               onChange={event => handleChange("notes", event.target.value)}
-              defaultValue={
-                newMealData.notes === "" ? "" : setNewMealData.description
-              }
+              defaultValue={mealData.notes === "" ? "" : mealData.notes}
               placeholder={"Notes"}
-            ></textarea>
+            />
           </DescriptionNotesInput>
         </form>
       </InnerContainer>
@@ -349,7 +359,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
 AddEdit.propTypes = {
   setMode: PropTypes.func,
   setEditMode: PropTypes.func,
-  meal: PropTypes.object,
+  meal: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   setMeal: PropTypes.func,
   oneMealId: PropTypes.string,
   mode: PropTypes.string

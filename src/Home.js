@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import "./theme.js";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import plateImg from "./images/plateImg.png";
+import useWindowDimensions from "./helpers/useWindowDimensions";
 
 const HomeContainer = styled.div`
   background: white;
@@ -13,7 +14,7 @@ const HomeContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  height: 100vh;
+  height: ${props => props.height}px;
   contain: content;
   @media (min-width: 1025px) {
     width: 80%;
@@ -27,7 +28,7 @@ const PlateContainer = styled.div`
   align-items: center;
   position: relative;
   justify-content: center;
-  margin-top: 12.5vh;
+  margin-top: 137px;
   img {
     width: 90vw;
     height: auto;
@@ -52,6 +53,9 @@ const AddIconContainer = styled.div`
 
 const Home = ({ setMode, setMeal, setOneMealId, meals, mealIds }) => {
   const randomSelector = () => {
+    if (!mealIds || mealIds.length < 1) {
+      alert("Please add a meal to get started");
+    }
     let randomNum = Math.floor(Math.random() * mealIds.length);
     let oneMealId = mealIds[randomNum].id;
     setOneMealId(oneMealId);
@@ -60,17 +64,13 @@ const Home = ({ setMode, setMeal, setOneMealId, meals, mealIds }) => {
     setMode("view");
   };
 
-  const mapList = () => {
-    meals.map(
-      (meal, id) =>
-        meal.mealData && meal.mealData.title !== "" && meal.mealData.title
-    );
-  };
+  const { height, width } = useWindowDimensions();
+  console.log(height);
 
   return (
-    <HomeContainer>
+    <HomeContainer height={height}>
       <PlateContainer>
-        <img src={plateImg} />
+        <img src={plateImg} alt="plate" />
         <SelectIconContainer>
           <FontAwesomeIcon onClick={() => randomSelector()} icon={faPlus} />
         </SelectIconContainer>
