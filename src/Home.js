@@ -1,100 +1,83 @@
 import React, { useEffect, useState } from "react";
 import "./theme.js";
-import firebase from "./firebase";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import plateImg from "./images/plateImg.png";
 
 const HomeContainer = styled.div`
   background: white;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
-  border-radius: 4px;
-  box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.12);
-  border: solid 1px grey;
+  height: 100vh;
   contain: content;
   @media (min-width: 1025px) {
-    margin: 50px;
     width: 80%;
     max-width: 700px;
   }
 `;
 
-const ListContainer = styled.div`
+const PlateContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  justify-content: center;
+  margin-top: 12.5vh;
+  img {
+    width: 90vw;
+    height: auto;
+    max-width: 600px;
+  }
 `;
 
-const SelectButton = styled.button`
-  padding: 10px;
-  width: 100px;
-  border-radius: 4px;
+const SelectIconContainer = styled.div`
+  font-size: 50px;
+  color: black;
   cursor: pointer;
+  position: absolute;
+  margin: auto;
 `;
 
-const AddButton = styled.button`
-  padding: 10px;
-  width: 100px;
-  border-radius: 4px;
+const AddIconContainer = styled.div`
+  font-size: 25px;
+  color: gray;
   cursor: pointer;
+  margin-bottom: 50px;
 `;
 
-const Home = ({ setMode, setMeal, setOneMealId }) => {
-  const [meals, setMeals] = useState([]);
-  const [mealIds, setMealIds] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const db = firebase.firestore();
-      const data = await db.collection("meals").get();
-      setMeals(data.docs.map(doc => ({ ...doc.data(), id: doc.id })));
-      setMealIds(data.docs.map(doc => ({ id: doc.id })));
-    };
-    fetchData();
-  }, []);
-
+const Home = ({ setMode, setMeal, setOneMealId, meals, mealIds }) => {
   const randomSelector = () => {
     let randomNum = Math.floor(Math.random() * mealIds.length);
     let oneMealId = mealIds[randomNum].id;
     setOneMealId(oneMealId);
-    const fetchData = async () => {
-      const db = firebase.firestore();
-      var docRef = db.collection("meals").doc(oneMealId);
-
-      docRef
-        .get()
-        .then(function(doc) {
-          if (doc.exists) {
-            setMeal(doc.data());
-          } else {
-            console.log("No such document!");
-          }
-        })
-        .catch(function(error) {
-          console.log("Error getting document:", error);
-        });
-    };
-    fetchData();
+    let oneMeal = meals.filter(x => x.id === oneMealId);
+    setMeal(oneMeal[0]);
     setMode("view");
+  };
+
+  const mapList = () => {
+    meals.map(
+      (meal, id) =>
+        meal.mealData && meal.mealData.title !== "" && meal.mealData.title
+    );
   };
 
   return (
     <HomeContainer>
-      <ListContainer>
-        {meals &&
-          meals.map(
-            (meal, id) =>
-              meal.mealData &&
-              meal.mealData.title !== "" && (
-                <p key={id}>{meal.mealData.title}</p>
-              )
-          )}
-      </ListContainer>
-      <SelectButton onClick={() => randomSelector()}>Select</SelectButton>
-      <AddButton onClick={() => setMode("add")}>Add New</AddButton>
+      <PlateContainer>
+        <img src={plateImg} />
+        <SelectIconContainer>
+          <FontAwesomeIcon onClick={() => randomSelector()} icon={faPlus} />
+        </SelectIconContainer>
+      </PlateContainer>
+      <AddIconContainer>
+        <FontAwesomeIcon onClick={() => setMode("add")} icon={faPlus} />
+      </AddIconContainer>
     </HomeContainer>
   );
 };

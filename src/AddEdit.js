@@ -10,6 +10,8 @@ const AddNewContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100%;
+  overflow: scroll;
   border-radius: 4px;
   box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.12);
   border: solid 1px grey;
@@ -63,35 +65,46 @@ const ImageContainer = styled.div`
   }
 `;
 
-const AddNew = ({ setMode }) => {
-  const [newTitle, setNewTitle] = useState("");
-  const [newDescription, setNewDescription] = useState("");
-  const [newNotes, setNewNotes] = useState("");
-  // const allInputs = { imgUrl: "" };
+const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
   const [imageAsFile, setImageAsFile] = useState("");
-  const [imageAsUrl, setImageAsUrl] = useState();
+  const [newMealData, setNewMealData] = useState({
+    title: meal ? meal.mealData.title : "",
+    description: meal ? meal.mealData.description : "",
+    notes: meal ? meal.mealData.notes : "",
+    imgUrl: meal ? meal.mealData.imgUrl : ""
+  });
 
-  const saveData = () => {
-    const mealData = {
-      title: newTitle,
-      description: newDescription,
-      notes: newNotes,
-      imgUrl: imageAsUrl
-    };
+  const onSave = () => {
     const db = firebase.firestore();
-    db.collection("meals").add({ mealData });
-
+    db.collection("meals").add({ newMealData });
+    setMeal({ mealData: newMealData });
     setMode("view");
+  };
+
+  const onUpdate = () => {
+    const db = firebase.firestore();
+    db.collection("meals")
+      .doc(oneMealId)
+      .set({ newMealData });
+    setMeal({ mealData: newMealData });
+    setMode("view");
+  };
+
+  const onDelete = () => {
+    const db = firebase.firestore();
+    db.collection("meals")
+      .doc(oneMealId)
+      .delete();
+    setMode("home");
   };
 
   const handleImageAsFile = e => {
     const image = e.target.files[0];
-    setImageAsFile(() => image);
+    setImageAsFile(imageFile => image);
   };
 
-  const handleFireBaseUpload = e => {
+  const handleFireBaseImageUpload = e => {
     e.preventDefault();
-    console.log("start of upload");
     if (imageAsFile === "") {
       console.error(`not an image, the image file is a ${typeof imageAsFile}`);
     }
@@ -102,7 +115,7 @@ const AddNew = ({ setMode }) => {
     uploadTask.on(
       "state_changed",
       snapShot => {
-        console.log("snapshot", snapShot);
+        console.log(snapShot);
       },
       err => {
         console.log(err);
@@ -113,16 +126,26 @@ const AddNew = ({ setMode }) => {
           .child(imageAsFile.name)
           .getDownloadURL()
           .then(fireBaseUrl => {
-            setImageAsUrl(fireBaseUrl);
+            setNewMealData(prevObject => ({
+              ...prevObject,
+              imgUrl: fireBaseUrl
+            }));
           });
       }
     );
   };
 
+  const handleChange = (field, value) => {
+    setNewMealData(newMealData => ({
+      ...newMealData,
+      [field]: value
+    }));
+  };
+
   return (
     <AddNewContainer>
       <CloseButton setMode={setMode} page={"home"} />
-      <form onSubmit={handleFireBaseUpload}>
+      <form onSubmit={handleFireBaseImageUpload}>
         <InputContainer>
           <label>Image</label>
           <br />
@@ -135,9 +158,9 @@ const AddNew = ({ setMode }) => {
         </InputContainer>
         <button>Add Image</button>
       </form>
-      {imageAsFile && (
+      {imageAsFile && newMealData.imgUrl && (
         <ImageContainer>
-          <img src={imageAsUrl} alt="image tag" />
+          <img src={newMealData.imgUrl} />
         </ImageContainer>
       )}
       <form>
@@ -148,7 +171,8 @@ const AddNew = ({ setMode }) => {
             type="text"
             id="title"
             name="title"
-            onChange={event => setNewTitle(event.target.value)}
+            onChange={event => handleChange("title", event.target.value)}
+            defaultValue={newMealData.title}
           ></input>
         </InputContainer>
         <InputContainer>
@@ -158,7 +182,8 @@ const AddNew = ({ setMode }) => {
             type="text"
             id="description"
             name="description"
-            onChange={event => setNewDescription(event.target.value)}
+            onChange={event => handleChange("description", event.target.value)}
+            defaultValue={newMealData.description}
           ></input>
         </InputContainer>
         <InputContainer>
@@ -168,19 +193,37 @@ const AddNew = ({ setMode }) => {
             type="text"
             id="notes"
             name="notes"
-            onChange={event => setNewNotes(event.target.value)}
+            onChange={event => handleChange("notes", event.target.value)}
+            defaultValue={newMealData.notes}
           ></textarea>
         </InputContainer>
       </form>
-      <SaveButton type="submit" value="Save" onClick={saveData}>
-        Save
-      </SaveButton>
+      {mode === "add" && (
+        <SaveButton type="submit" value="Save" onClick={onSave}>
+          Save
+        </SaveButton>
+      )}
+      {mode === "edit" && (
+        <>
+          <SaveButton onClick={onUpdate} type="submit" value="Update">
+            Update
+          </SaveButton>
+          <SaveButton onClick={onDelete} type="submit" value="Delete">
+            Delete
+          </SaveButton>
+        </>
+      )}
     </AddNewContainer>
   );
 };
 
-AddNew.propTypes = {
-  setMode: PropTypes.func
+AddEdit.propTypes = {
+  setMode: PropTypes.func,
+  setEditMode: PropTypes.func,
+  meal: PropTypes.object,
+  setMeal: PropTypes.func,
+  oneMealId: PropTypes.string,
+  mode: PropTypes.string
 };
 
-export default AddNew;
+export default AddEdit;

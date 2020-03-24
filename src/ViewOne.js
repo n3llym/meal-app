@@ -1,35 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import Edit from "./Edit";
-import CloseButton from "./Components/CloseButton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import plateImg from "./images/plateImg.png";
 
 const ViewOneContainer = styled.div`
   background: white;
-  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
   height: 100vh;
-  border-radius: 4px;
-  box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.12);
-  border: solid 1px grey;
-  position: relative;
-  overflow-y: scroll;
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  contain: content;
   @media (min-width: 1025px) {
-    margin: 50px;
     width: 80%;
     max-width: 700px;
   }
 `;
 
-const TextContainer = styled.div`
-  height: 100vh;
-  width: 100%;
-  background-color: blue;
+const HeaderContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+  position: fixed;
+  top: 0;
 `;
 
 const Title = styled.div`
@@ -37,68 +36,144 @@ const Title = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 2rem;
-  color: white;
-  background-color: green;
-  height: 75px;
-  width: 100%;
-  margin: 75px 20px;
-  cursor: pointer;
+  width: 90%;
 `;
 
-const ImageContainer = styled.div`
-  height: 250px;
-  width: 250px;
-  background-color: yellow;
-`;
-
-const StyledNotes = styled.div`
-  height: 60vh;
-  background-color: pink;
+const PlateContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 25px;
+  position: relative;
+  justify-content: center;
+  margin-top: 12.5vh;
+  img {
+    width: 90vw;
+    height: auto;
+    max-width: 600px;
+  }
+`;
+
+const ImageContainer = styled.div`
+  height: 200px;
+  width: 200px;
+  background-color: gray;
+  border-radius: 50%;
+  position: absolute;
+  margin: auto;
+  img {
+    height: 200px;
+    width: 200px;
+    border-radius: 50%;
+  }
+`;
+
+const DescriptionContainer = styled.div`
+  width: 100%;
+  height: auto;
+  margin-top: 40px;
+  text-align: center;
+  p {
+    margin: 0 15px;
+  }
+`;
+
+const BackIconContainer = styled.div`
+  font-size: 40px;
+  color: gray;
+  cursor: pointer;
+  margin: 5px;
+`;
+
+const EditIconContainer = styled.div`
+  font-size: 30px;
+  color: gray;
+  cursor: pointer;
+  margin: 5px;
+`;
+
+const ViewNotesIconContainer = styled.div`
+  display: ${props => props.viewNotes && "none"};
+  position: fixed;
+  bottom: 5px;
+`;
+
+const StyledNotes = styled.div`
+  height: calc(100vh - 102px);
+  position: absolute;
+  bottom: 0;
+  background-color: white;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   overflow-y: scroll;
+  display: ${props => !props.viewNotes && "none"};
   &::-webkit-scrollbar {
     display: none;
   }
   p {
-    border: 2px solid white;
+    height: auto;
+    margin: 15px;
   }
 `;
 
-const ViewOne = ({ setMode, meal, oneMealId }) => {
-  const [editMode, setEditMode] = useState(false);
+const ViewOne = ({ setMode, oneMealId, meal }) => {
+  console.log(meal);
+  console.log(oneMealId);
+  const [viewNotes, setViewNotes] = useState(false);
 
   return (
     <>
-      {!editMode ? (
-        <ViewOneContainer>
-          <CloseButton setMode={setMode} page={"home"} />
-          <TextContainer>
-            <Title
-              className="title"
+      <ViewOneContainer>
+        <HeaderContainer>
+          <BackIconContainer>
+            <FontAwesomeIcon
+              icon={faChevronLeft}
               onClick={() => {
-                setEditMode(true);
+                setMode("home");
               }}
-            >
-              <p>{meal && meal.mealData && meal.mealData.title}</p>
-            </Title>
-            <ImageContainer></ImageContainer>
-          </TextContainer>
-          <StyledNotes>
-            <p>{meal && meal.mealData && meal.mealData.notes}</p>
-          </StyledNotes>
-        </ViewOneContainer>
-      ) : (
-        <Edit
-          meal={meal.mealData}
-          oneMealId={oneMealId}
-          setEditMode={setEditMode}
-          setMode={setMode}
-          setEditMode={setEditMode}
-        />
-      )}
+            />
+          </BackIconContainer>
+          <Title>
+            {/* <p>{meal && meal.mealData && meal.mealData.title}</p> */}
+            <p>Risotto</p>
+          </Title>
+          <EditIconContainer>
+            <FontAwesomeIcon icon={faEdit} onClick={() => setMode("edit")} />
+          </EditIconContainer>
+        </HeaderContainer>
+        <PlateContainer>
+          <img src={plateImg} />
+          <ImageContainer>
+            <img src={meal && meal.mealData.imgUrl} />
+          </ImageContainer>
+        </PlateContainer>
+        <DescriptionContainer>
+          {/* <p>{meal && meal.mealData && meal.mealData.description}</p> */}
+          <p>Asparugus and Parmesan</p>
+        </DescriptionContainer>
+        <ViewNotesIconContainer
+          onClick={() => setViewNotes(!viewNotes)}
+          viewNotes={viewNotes}
+        >
+          <FontAwesomeIcon icon={faChevronUp} />
+        </ViewNotesIconContainer>
+        <StyledNotes viewNotes={viewNotes}>
+          {/* <p>{meal && meal.mealData && meal.mealData.notes}</p> */}
+          <p>
+            Notes and notes and notes and notesNotes and notes and notes and
+            notes Notes and notes and notes and notes Notes and notes and notes
+            and notes Notes and notes and notes and notes Notes and notes and
+            notes and notes
+          </p>
+          <ViewNotesIconContainer>
+            <FontAwesomeIcon
+              icon={faChevronDown}
+              onClick={() => setViewNotes(!viewNotes)}
+            />
+          </ViewNotesIconContainer>
+        </StyledNotes>
+      </ViewOneContainer>
     </>
   );
 };

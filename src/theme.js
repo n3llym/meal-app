@@ -1,7 +1,7 @@
 const theme = {
   fontfamily: "Comic Sans",
   bgColor: "gray",
-  fontColor: "pink"
+  fontColor: "gray"
 };
 
 module.exports = theme;
