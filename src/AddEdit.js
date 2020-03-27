@@ -8,8 +8,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { checkValid } from "./helpers/functions.js";
+import ImageCropper from "./ImageEditor";
 
 import useWindowDimensions from "./helpers/useWindowDimensions";
+
+const acceptedFileTypes =
+  "image/x-png, image/png, image/jpg, image/jpeg, image/gif";
 
 const AddNewContainer = styled.div`
   background: white;
@@ -167,19 +171,19 @@ const ImageInput = styled.div`
     cursor: pointer;
     font-size: 40px;
   }
-  input {
-    position: absolute;
-    top: 45%;
-    left: 45%;
-    border: none;
-    width: 0.1px;
-    height: 0.1px;
-    // opacity: 0;
-    overflow: hidden;
-    &:focus {
-      outline: none;
-    }
-  }
+  // input {
+  //   position: absolute;
+  //   top: 45%;
+  //   left: 45%;
+  //   border: none;
+  //   width: 0.1px;
+  //   height: 0.1px;
+  //   // opacity: 0;
+  //   overflow: hidden;
+  //   &:focus {
+  //     outline: none;
+  //   }
+  // }
 `;
 
 const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
@@ -235,15 +239,21 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
     setMode("home");
   };
 
-  const handleFireBaseImageUpload = e => {
+  const handleImageAsFile = e => {
+    // e.preventDefault();
     const imageAsFile = e.target.files[0];
     setImageAsFile(imageAsFile);
-    if (imageAsFile === "") {
-      console.error(`not an image, the image file is a ${typeof imageAsFile}`);
-    }
-    const uploadTask = storage
-      .ref(`/images/${imageAsFile.name}`)
-      .put(imageAsFile);
+  };
+
+  const handleFireBaseImageUpload = e => {
+    console.log(e);
+    console.log("imageasfile", imageAsFile);
+    // const imageAsFile = e.target.files[0];
+    // setImageAsFile(imageAsFile);
+    // if (imageAsFile === "") {
+    //   console.error(`not an image, the image file is a ${typeof imageAsFile}`);
+    // }
+    const uploadTask = storage.ref(`/images/${imageAsFile.name}`).put(e);
 
     uploadTask.on(
       "state_changed",
@@ -268,7 +278,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
     );
   };
 
-  console.log(mealData);
+  console.log("mealData", mealData);
 
   const handleChange = (field, value) => {
     setMealData(mealData => ({
@@ -307,16 +317,23 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
           <img src={plateImg} alt="plate" />
           {!mealData.imgUrl && (
             <ImageInput>
-              <label htmlFor="image">
+              {/* <label htmlFor="image">
                 <FontAwesomeIcon icon={faImage} />{" "}
-              </label>
-              <input
+              </label> */}
+              <ImageCropper
+                firebaseUpload={handleFireBaseImageUpload}
+                setImageAsFile={setImageAsFile}
+                imageAsFile={imageAsFile}
+              />
+              {/* <input
                 type="file"
                 id="image"
                 name="image"
                 className="inputfile"
                 onChange={handleFireBaseImageUpload}
-              />
+                accept={acceptedFileTypes}
+                multiple={false}
+              /> */}
             </ImageInput>
           )}
           {mealData.imgUrl && (
@@ -325,6 +342,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
             </ImageContainer>
           )}
         </PlateContainer>
+
         <form>
           <DescriptionNotesInput>
             <input
