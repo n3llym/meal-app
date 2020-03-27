@@ -65,13 +65,13 @@ const Home = ({ setMode, setMeal, setOneMealId, meals, mealIds }) => {
   };
 
   const { height, width } = useWindowDimensions();
-  console.log(height);
 
   return (
     <HomeContainer height={height}>
       <PlateContainer>
         <img src={plateImg} alt="plate" />
         <SelectIconContainer>
+          {/* to-do: add image flasher */}
           <FontAwesomeIcon onClick={() => randomSelector()} icon={faPlus} />
         </SelectIconContainer>
       </PlateContainer>

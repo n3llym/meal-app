@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import firebase from "firebase";
@@ -8,7 +8,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { checkValid } from "./helpers/functions.js";
-
 import useWindowDimensions from "./helpers/useWindowDimensions";
 
 const AddNewContainer = styled.div`
@@ -143,14 +142,14 @@ const DeleteIconContainer = styled.div`
 `;
 
 const ImageContainer = styled.div`
-  height: 250px;
-  width: 250px;
+  height: 200px;
+  width: 200px;
   border-radius: 50%;
   contain: content;
   position: absolute;
   img {
-    height: 250px;
-    width: 250px;
+    height: 200px;
+    width: 200px;
     object-fit: cover;
     display: block;
     margin-left: auto;
@@ -162,20 +161,21 @@ const ImageContainer = styled.div`
 const ImageInput = styled.div`
   label {
     position: absolute;
-    top: 45%;
-    left: 45%;
+    top: 42%;
+    left: 42%;
     cursor: pointer;
     font-size: 40px;
   }
-  input {
+  .inputfile {
     position: absolute;
-    top: 45%;
-    left: 45%;
+    top: 42%;
+    left: 42%;
     border: none;
     width: 0.1px;
     height: 0.1px;
-    // opacity: 0;
+    opacity: 0;
     overflow: hidden;
+    position: absolute;
     &:focus {
       outline: none;
     }
@@ -193,7 +193,6 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
     imgUrl: checkValid(meal, "imgUrl") ? meal.mealData.imgUrl : ""
   });
   const { height, width } = useWindowDimensions();
-  const editorRef = useRef();
 
   const onSave = () => {
     const db = firebase.firestore();
@@ -236,8 +235,10 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
   };
 
   const handleFireBaseImageUpload = e => {
+    //to-do: add loading
+    e.preventDefault();
     const imageAsFile = e.target.files[0];
-    setImageAsFile(imageAsFile);
+    setImageAsFile(imageFile => imageAsFile);
     if (imageAsFile === "") {
       console.error(`not an image, the image file is a ${typeof imageAsFile}`);
     }
@@ -267,8 +268,6 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
       }
     );
   };
-
-  console.log(mealData);
 
   const handleChange = (field, value) => {
     setMealData(mealData => ({
@@ -305,10 +304,10 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
         </TitleInput>
         <PlateContainer>
           <img src={plateImg} alt="plate" />
-          {!mealData.imgUrl && (
+          {!imageAsFile && (
             <ImageInput>
               <label htmlFor="image">
-                <FontAwesomeIcon icon={faImage} />{" "}
+                <FontAwesomeIcon icon={faImage} />
               </label>
               <input
                 type="file"
@@ -316,7 +315,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
                 name="image"
                 className="inputfile"
                 onChange={handleFireBaseImageUpload}
-              />
+              ></input>
             </ImageInput>
           )}
           {mealData.imgUrl && (
