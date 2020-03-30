@@ -6,14 +6,23 @@ import white from "./images/white.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import useWindowDimensions from "./helpers/useWindowDimensions";
+import plateImg from "./images/plateImg.png";
 
 const acceptedFileTypes =
   "image/x-png, image/png, image/jpg, image/jpeg, image/gif";
 
-const EditorContainer = styled.div`
+const PlateContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  justify-content: center;
+  .plate {
+    width: 90vw;
+    height: auto;
+    max-width: 600px;
+    position: relative;
+  }
 `;
 
 const AvatarAndUploaderContainer = styled.div`
@@ -21,11 +30,14 @@ const AvatarAndUploaderContainer = styled.div`
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  position: absolute;
-  top: 55px;
   background: rgba(0, 0, 0, 0);
+  position: absolute;
   canvas {
     border-radius: 50%;
+    height: ${props => props.width * 0.6}px;
+    width: ${props => props.width * 0.6}px;
+    max-width: 400px;
+    max-height: 400px;
   }
 `;
 
@@ -98,8 +110,7 @@ const ImageCropper = ({
   imageAsFile,
   setImageAsFile,
   imageUrl,
-  mode,
-  ...props
+  mode
 }) => {
   const editor = useRef();
   const { height, width } = useWindowDimensions();
@@ -145,39 +156,42 @@ const ImageCropper = ({
   };
 
   return (
-    <EditorContainer>
-      <AvatarAndUploaderContainer>
-        <FileUploaderButton
-          htmlFor="image"
-          className="imageUploader"
-          imageAsFile={imageAsFile}
-          imageUrl={imageUrl}
-        >
-          <FontAwesomeIcon icon={faImage} />{" "}
-        </FileUploaderButton>
-        <HiddenFileInput
-          type="file"
-          id="image"
-          name="image"
-          className="fileinput"
-          onChange={handleImageAsFile}
-          accept={acceptedFileTypes}
-          multiple={false}
-        />
-        <AvatarEditorContainer width={width}>
-          <ReactAvatarEditor
-            ref={editor}
-            image={imagePreview()}
-            width={width * 0.6}
-            height={width * 0.6}
-            scale={parseFloat(scale)}
-            border={0}
-            borderRadius={150}
-            rotate={rotation}
-            color={[255, 255, 255, 0]}
+    <>
+      <PlateContainer>
+        <img src={plateImg} alt="plate" className="plate" />
+        <AvatarAndUploaderContainer width={width}>
+          <FileUploaderButton
+            htmlFor="image"
+            className="imageUploader"
+            imageAsFile={imageAsFile}
+            imageUrl={imageUrl}
+          >
+            <FontAwesomeIcon icon={faImage} />{" "}
+          </FileUploaderButton>
+          <HiddenFileInput
+            type="file"
+            id="image"
+            name="image"
+            className="fileinput"
+            onChange={handleImageAsFile}
+            accept={acceptedFileTypes}
+            multiple={false}
           />
-        </AvatarEditorContainer>
-      </AvatarAndUploaderContainer>
+          <AvatarEditorContainer width={width}>
+            <ReactAvatarEditor
+              ref={editor}
+              image={imagePreview()}
+              width={width * 0.6}
+              height={width * 0.6}
+              scale={parseFloat(scale)}
+              border={0}
+              borderRadius={150}
+              rotate={rotation}
+              color={[255, 255, 255, 0]}
+            />
+          </AvatarEditorContainer>
+        </AvatarAndUploaderContainer>
+      </PlateContainer>
       <ControlsContainer>
         <LabelAndInputContainer>
           <label htmlFor="scale">Zoom</label>
@@ -214,7 +228,7 @@ const ImageCropper = ({
       >
         Save Image
       </SaveButton>
-    </EditorContainer>
+    </>
   );
 };
 

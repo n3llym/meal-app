@@ -273,23 +273,23 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
             placeholder={"Meal"}
           ></textarea>
         </TitleInput>
-        <PlateContainer>
-          <img src={plateImg} alt="plate" className="plate" />
-          {(!mealData.imgUrl || mode === "edit") && (
-            <ImageCropper
-              firebaseUpload={handleFireBaseImageUpload}
-              imageAsFile={imageAsFile}
-              setImageAsFile={setImageAsFile}
-              imageUrl={mealData.imgUrl}
-              mode={mode}
-            />
-          )}
-          {mealData.imgUrl && mode !== "edit" && (
+        {(!mealData.imgUrl || mode === "edit") && (
+          <ImageCropper
+            firebaseUpload={handleFireBaseImageUpload}
+            imageAsFile={imageAsFile}
+            setImageAsFile={setImageAsFile}
+            imageUrl={mealData.imgUrl}
+            mode={mode}
+          />
+        )}
+        {mealData.imgUrl && mode !== "edit" && (
+          <PlateContainer>
+            <img src={plateImg} alt="plate" className="plate" />
             <ImageContainer>
               <img src={mealData.imgUrl} alt="food" />
             </ImageContainer>
-          )}
-        </PlateContainer>
+          </PlateContainer>
+        )}
 
         <form>
           <DescriptionNotesInput>
