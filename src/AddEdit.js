@@ -6,14 +6,9 @@ import { storage } from "./firebase";
 import plateImg from "./images/plateImg.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
-import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { checkValid } from "./helpers/functions.js";
 import ImageCropper from "./ImageEditor";
-
 import useWindowDimensions from "./helpers/useWindowDimensions";
-
-const acceptedFileTypes =
-  "image/x-png, image/png, image/jpg, image/jpeg, image/gif";
 
 const AddNewContainer = styled.div`
   background: white;
@@ -47,7 +42,7 @@ const PlateContainer = styled.div`
   align-items: center;
   position: relative;
   justify-content: center;
-  img {
+  .plate {
     width: 90vw;
     height: auto;
     max-width: 600px;
@@ -55,11 +50,12 @@ const PlateContainer = styled.div`
 `;
 
 const TitleInput = styled.div`
-  margin: 32px 0 15px 0;
+  margin: 32px 0 5px 0;
   width: 100%;
-  height: 90px;
+  height: auto;
   & textarea {
     font-size: 2rem;
+    height: 38px;
     color: gray;
     font-family: "Helvetica Neue";
     background-color: #faf8f8;
@@ -67,7 +63,7 @@ const TitleInput = styled.div`
     border-radius: 4px;
     text-align: center;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
     padding: 5px;
@@ -106,7 +102,7 @@ const DescriptionNotesInput = styled.div`
     }
   }
   textarea {
-    height: 5rem;
+    height: 2rem;
     font-size: 1rem;
     border: none;
     color: gray;
@@ -163,29 +159,6 @@ const ImageContainer = styled.div`
   }
 `;
 
-const ImageInput = styled.div`
-  label {
-    position: absolute;
-    top: 45%;
-    left: 45%;
-    cursor: pointer;
-    font-size: 40px;
-  }
-  // input {
-  //   position: absolute;
-  //   top: 45%;
-  //   left: 45%;
-  //   border: none;
-  //   width: 0.1px;
-  //   height: 0.1px;
-  //   // opacity: 0;
-  //   overflow: hidden;
-  //   &:focus {
-  //     outline: none;
-  //   }
-  // }
-`;
-
 const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
   const [imageAsFile, setImageAsFile] = useState("");
   const [mealData, setMealData] = useState({
@@ -197,12 +170,12 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
     imgUrl: checkValid(meal, "imgUrl") ? meal.mealData.imgUrl : ""
   });
   const { height, width } = useWindowDimensions();
-  const editorRef = useRef();
 
   const onSave = () => {
     const db = firebase.firestore();
     db.collection("meals").add({ mealData });
     setMeal({ mealData: mealData });
+    setImageAsFile("");
     setMode("view");
   };
 
@@ -239,20 +212,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
     setMode("home");
   };
 
-  const handleImageAsFile = e => {
-    // e.preventDefault();
-    const imageAsFile = e.target.files[0];
-    setImageAsFile(imageAsFile);
-  };
-
   const handleFireBaseImageUpload = e => {
-    console.log(e);
-    console.log("imageasfile", imageAsFile);
-    // const imageAsFile = e.target.files[0];
-    // setImageAsFile(imageAsFile);
-    // if (imageAsFile === "") {
-    //   console.error(`not an image, the image file is a ${typeof imageAsFile}`);
-    // }
     const uploadTask = storage.ref(`/images/${imageAsFile.name}`).put(e);
 
     uploadTask.on(
@@ -278,14 +238,14 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
     );
   };
 
-  console.log("mealData", mealData);
-
   const handleChange = (field, value) => {
     setMealData(mealData => ({
       ...mealData,
       [field]: value
     }));
   };
+
+  console.log(mealData);
 
   return (
     <AddNewContainer>
@@ -314,29 +274,17 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
           ></textarea>
         </TitleInput>
         <PlateContainer>
-          <img src={plateImg} alt="plate" />
-          {!mealData.imgUrl && (
-            <ImageInput>
-              {/* <label htmlFor="image">
-                <FontAwesomeIcon icon={faImage} />{" "}
-              </label> */}
-              <ImageCropper
-                firebaseUpload={handleFireBaseImageUpload}
-                setImageAsFile={setImageAsFile}
-                imageAsFile={imageAsFile}
-              />
-              {/* <input
-                type="file"
-                id="image"
-                name="image"
-                className="inputfile"
-                onChange={handleFireBaseImageUpload}
-                accept={acceptedFileTypes}
-                multiple={false}
-              /> */}
-            </ImageInput>
+          <img src={plateImg} alt="plate" className="plate" />
+          {(!mealData.imgUrl || mode === "edit") && (
+            <ImageCropper
+              firebaseUpload={handleFireBaseImageUpload}
+              imageAsFile={imageAsFile}
+              setImageAsFile={setImageAsFile}
+              imageUrl={mealData.imgUrl}
+              mode={mode}
+            />
           )}
-          {mealData.imgUrl && (
+          {mealData.imgUrl && mode !== "edit" && (
             <ImageContainer>
               <img src={mealData.imgUrl} alt="food" />
             </ImageContainer>

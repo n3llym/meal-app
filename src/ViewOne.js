@@ -57,14 +57,16 @@ const PlateContainer = styled.div`
 `;
 
 const ImageContainer = styled.div`
-  height: 200px;
-  width: 200px;
+  height: ${props => props.width * 0.6}px;
+  width: ${props => props.width * 0.6}px;
+  max-width: 400px;
+  max-height: 400px;
   border-radius: 50%;
   position: absolute;
   margin: auto;
   img {
-    height: 200px;
-    width: 200px;
+    height: ${props => props.width * 0.6}px;
+    width: ${props => props.width * 0.6}px;
     border-radius: 50%;
   }
 `;
@@ -154,8 +156,8 @@ const ViewOne = ({ setMode, meal, setMeal }) => {
         <PlateContainer>
           <img src={plateImg} alt="plate" />
           {checkValid(meal, "imgUrl") && (
-            <ImageContainer>
-              <img src={checkValid(meal, "imgUrl")} alt="food" />
+            <ImageContainer width={width}>
+              <img src={checkValid(meal, "imgUrl")} alt="food" width={width} />
             </ImageContainer>
           )}
         </PlateContainer>
