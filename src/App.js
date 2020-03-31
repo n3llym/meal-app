@@ -7,16 +7,16 @@ import theme from "./theme";
 import firebase from "./firebase";
 
 const OuterPageContainer = styled.div`
-  width: 100vw;
   display: flex;
   justify-content: center;
   contain: content;
   color: ${theme.fontColor};
   font-family: "Helvetica Neue";
+  height: auto;
 `;
 
 function App() {
-  const [mode, setMode] = useState("add");
+  const [mode, setMode] = useState("home");
   const [meals, setMeals] = useState([]);
   const [meal, setMeal] = useState({});
   const [oneMealId, setOneMealId] = useState();

@@ -15,7 +15,7 @@ const ViewOneContainer = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: ${props => props.height}px;
+  height: ${props => props.height - 1}px;
   contain: content;
   justify-content: flex-start;
   @media (min-width: 1025px) {
@@ -30,11 +30,11 @@ const Title = styled.div`
   font-size: 2rem;
   width: 90%;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  margin: 32px 0 15px 0;
-  height: 80px;
+  margin: 32px 0 5px 0;
+  height: 38px;
   padding: 5px;
   p {
     contain: content;
@@ -52,21 +52,23 @@ const PlateContainer = styled.div`
   img {
     width: 90vw;
     height: auto;
-    max-width: 600px;
+    max-width: 450px;
   }
 `;
 
 const ImageContainer = styled.div`
   height: ${props => props.width * 0.6}px;
   width: ${props => props.width * 0.6}px;
-  max-width: 400px;
-  max-height: 400px;
+  max-width: 300px;
+  max-height: 300px;
   border-radius: 50%;
   position: absolute;
   margin: auto;
   img {
     height: ${props => props.width * 0.6}px;
     width: ${props => props.width * 0.6}px;
+    max-width: 300px;
+    max-height: 300px;
     border-radius: 50%;
   }
 `;
@@ -111,7 +113,7 @@ const ViewNotesIconContainer = styled.div`
 `;
 
 const StyledNotes = styled.div`
-  height: ${props => `calc(${props.height}px - 102px)`};
+  height: ${props => `calc(${props.height}px - 75px)`};
   position: absolute;
   bottom: 0;
   background-color: white;

@@ -14,7 +14,7 @@ const HomeContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  height: ${props => props.height}px;
+  height: ${props => props.height - 1}px;
   contain: content;
   @media (min-width: 1025px) {
     width: 80%;
@@ -28,11 +28,11 @@ const PlateContainer = styled.div`
   align-items: center;
   position: relative;
   justify-content: center;
-  margin-top: 137px;
+  margin-top: 85px;
   img {
     width: 90vw;
     height: auto;
-    max-width: 600px;
+    max-width: 450px;
   }
 `;
 

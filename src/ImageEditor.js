@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useState } from "react";
 import ReactAvatarEditor from "react-avatar-editor";
 import PropTypes from "prop-types";
 import styled from "styled-components";
@@ -20,7 +20,7 @@ const PlateContainer = styled.div`
   .plate {
     width: 90vw;
     height: auto;
-    max-width: 600px;
+    max-width: 450px;
     position: relative;
   }
 `;
@@ -36,16 +36,16 @@ const AvatarAndUploaderContainer = styled.div`
     border-radius: 50%;
     height: ${props => props.width * 0.6}px;
     width: ${props => props.width * 0.6}px;
-    max-width: 400px;
-    max-height: 400px;
+    max-width: 300px;
+    max-height: 300px;
   }
 `;
 
 const AvatarEditorContainer = styled.div`
   height: ${props => props.width * 0.6}px;
   width: ${props => props.width * 0.6}px;
-  max-width: 400px;
-  max-height: 400px;
+  max-width: 300px;
+  max-height: 300px;
   contain: content;
   border-radius: 50%;
   position: relative;

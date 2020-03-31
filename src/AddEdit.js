@@ -10,17 +10,33 @@ import { checkValid } from "./helpers/functions.js";
 import ImageCropper from "./ImageEditor";
 import useWindowDimensions from "./helpers/useWindowDimensions";
 
+const OuterContainer = styled.div`
+  height: ${props => props.height - 1}px;
+  height: 100%;
+  width: 100vw;
+  overflow: scroll;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  &::-webkit-scrollbar {
+    display: none !important;
+  }
+  // border: 2px solid red;
+`;
+
 const AddNewContainer = styled.div`
   background: white;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
-  height: auto;
-  contain: content;
+  height: 100%;
+  // border: 2px solid green;
+  // contain: content;
   overflow: scroll;
   &::-webkit-scrollbar {
-    display: none;
+    display: none !important;
   }
   @media (min-width: 1025px) {
     width: 80%;
@@ -29,11 +45,12 @@ const AddNewContainer = styled.div`
 `;
 
 const InnerContainer = styled.div`
-  height: ${props => props.height}px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  // border: 2px solid yellow;
+  height: ${props => props.height - 1}px;
 `;
 
 const PlateContainer = styled.div`
@@ -42,10 +59,11 @@ const PlateContainer = styled.div`
   align-items: center;
   position: relative;
   justify-content: center;
+  margin: 0 5px;
   .plate {
     width: 90vw;
     height: auto;
-    max-width: 600px;
+    max-width: 450px;
   }
 `;
 
@@ -53,7 +71,7 @@ const TitleInput = styled.div`
   margin: 32px 0 5px 0;
   width: 100%;
   height: auto;
-  & textarea {
+  & input {
     font-size: 2rem;
     height: 38px;
     color: gray;
@@ -102,7 +120,7 @@ const DescriptionNotesInput = styled.div`
     }
   }
   textarea {
-    height: 2rem;
+    height: auto;
     font-size: 1rem;
     border: none;
     color: gray;
@@ -140,6 +158,7 @@ const CancelButton = styled.div`
 const DeleteIconContainer = styled.div`
   color: red;
   margin-bottom: 15px;
+  cursor: pointer;
 `;
 
 const ImageContainer = styled.div`
@@ -179,6 +198,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
     setMode("view");
   };
 
+  console.log("meal", meal);
   const onUpdate = () => {
     //to-do: add ability to update photo
     const db = firebase.firestore();
@@ -245,83 +265,87 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
     }));
   };
 
-  console.log(mealData);
-
   return (
-    <AddNewContainer>
-      <InnerContainer height={height}>
-        {mode === "add" && (
-          <>
-            <SaveButton onClick={onSave}>Save</SaveButton>
-            <CancelButton onClick={() => setMode("home")}>Cancel</CancelButton>
-          </>
-        )}
-        {mode === "edit" && (
-          <>
-            <SaveButton onClick={onUpdate}>Update</SaveButton>
-            <CancelButton onClick={() => setMode("view")}>Cancel</CancelButton>
-          </>
-        )}
-        <TitleInput>
-          <textarea
-            type="text"
-            id="title"
-            name="title"
-            rows="2"
-            onChange={event => handleChange("title", event.target.value)}
-            defaultValue={mealData.title === "" ? "" : mealData.title}
-            placeholder={"Meal"}
-          ></textarea>
-        </TitleInput>
-        {(!mealData.imgUrl || mode === "edit") && (
-          <ImageCropper
-            firebaseUpload={handleFireBaseImageUpload}
-            imageAsFile={imageAsFile}
-            setImageAsFile={setImageAsFile}
-            imageUrl={mealData.imgUrl}
-            mode={mode}
-          />
-        )}
-        {mealData.imgUrl && mode !== "edit" && (
-          <PlateContainer>
-            <img src={plateImg} alt="plate" className="plate" />
-            <ImageContainer>
-              <img src={mealData.imgUrl} alt="food" />
-            </ImageContainer>
-          </PlateContainer>
-        )}
-
-        <form>
-          <DescriptionNotesInput>
+    <OuterContainer height={height}>
+      <AddNewContainer height={height}>
+        <InnerContainer height={height}>
+          {mode === "add" && (
+            <>
+              <SaveButton onClick={onSave}>Save</SaveButton>
+              <CancelButton onClick={() => setMode("home")}>
+                Cancel
+              </CancelButton>
+            </>
+          )}
+          {mode === "edit" && (
+            <>
+              <SaveButton onClick={onUpdate}>Update</SaveButton>
+              <CancelButton onClick={() => setMode("view")}>
+                Cancel
+              </CancelButton>
+            </>
+          )}
+          <TitleInput>
             <input
               type="text"
-              id="description"
-              name="description"
-              onChange={event =>
-                handleChange("description", event.target.value)
-              }
-              defaultValue={
-                mealData.description === "" ? "" : mealData.description
-              }
-              placeholder={"Description"}
+              id="title"
+              name="title"
+              rows="2"
+              onChange={event => handleChange("title", event.target.value)}
+              defaultValue={mealData.title === "" ? "" : mealData.title}
+              placeholder={"Meal"}
             />
-            <textarea
-              type="text"
-              id="notes"
-              name="notes"
-              onChange={event => handleChange("notes", event.target.value)}
-              defaultValue={mealData.notes === "" ? "" : mealData.notes}
-              placeholder={"Notes"}
+          </TitleInput>
+          {(!mealData.imgUrl || mode === "edit") && (
+            <ImageCropper
+              firebaseUpload={handleFireBaseImageUpload}
+              imageAsFile={imageAsFile}
+              setImageAsFile={setImageAsFile}
+              imageUrl={mealData.imgUrl}
+              mode={mode}
             />
-          </DescriptionNotesInput>
-        </form>
-      </InnerContainer>
-      {mode === "edit" && (
-        <DeleteIconContainer>
-          <FontAwesomeIcon icon={faTrashAlt} onClick={() => onDelete()} />
-        </DeleteIconContainer>
-      )}
-    </AddNewContainer>
+          )}
+          {mealData.imgUrl && mode !== "edit" && (
+            <PlateContainer>
+              <img src={plateImg} alt="plate" className="plate" />
+              <ImageContainer>
+                <img src={mealData.imgUrl} alt="food" />
+              </ImageContainer>
+            </PlateContainer>
+          )}
+
+          <form>
+            <DescriptionNotesInput>
+              <input
+                type="text"
+                id="description"
+                name="description"
+                onChange={event =>
+                  handleChange("description", event.target.value)
+                }
+                defaultValue={
+                  mealData.description === "" ? "" : mealData.description
+                }
+                placeholder={"Description"}
+              />
+              <textarea
+                type="text"
+                id="notes"
+                name="notes"
+                onChange={event => handleChange("notes", event.target.value)}
+                defaultValue={mealData.notes === "" ? "" : mealData.notes}
+                placeholder={"Notes"}
+              />
+            </DescriptionNotesInput>
+          </form>
+        </InnerContainer>
+        {mode === "edit" && (
+          <DeleteIconContainer>
+            <FontAwesomeIcon icon={faTrashAlt} onClick={() => onDelete()} />
+          </DeleteIconContainer>
+        )}
+      </AddNewContainer>
+    </OuterContainer>
   );
 };
 
