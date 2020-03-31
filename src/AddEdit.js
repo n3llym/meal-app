@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import firebase from "firebase";
@@ -21,7 +21,6 @@ const OuterContainer = styled.div`
   &::-webkit-scrollbar {
     display: none !important;
   }
-  // border: 2px solid red;
 `;
 
 const AddNewContainer = styled.div`
@@ -32,8 +31,6 @@ const AddNewContainer = styled.div`
   justify-content: space-between;
   width: 100%;
   height: 100%;
-  // border: 2px solid green;
-  // contain: content;
   overflow: scroll;
   &::-webkit-scrollbar {
     display: none !important;
@@ -49,7 +46,6 @@ const InnerContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  // border: 2px solid yellow;
   height: ${props => props.height - 1}px;
 `;
 
@@ -188,7 +184,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
     notes: checkValid(meal, "notes") ? meal.mealData.notes : "",
     imgUrl: checkValid(meal, "imgUrl") ? meal.mealData.imgUrl : ""
   });
-  const { height, width } = useWindowDimensions();
+  const { height } = useWindowDimensions();
 
   const onSave = () => {
     const db = firebase.firestore();
@@ -198,7 +194,6 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
     setMode("view");
   };
 
-  console.log("meal", meal);
   const onUpdate = () => {
     //to-do: add ability to update photo
     const db = firebase.firestore();

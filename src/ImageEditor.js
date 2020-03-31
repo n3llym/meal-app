@@ -113,7 +113,7 @@ const ImageCropper = ({
   mode
 }) => {
   const editor = useRef();
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const [scale, setScale] = useState(1);
   const [rotation, setRotation] = useState(0);
 

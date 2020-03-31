@@ -45,7 +45,7 @@ const ImageContainer = styled.div`
   border-radius: 50%;
   position: absolute;
   margin: auto;
-  cursor: pointer;
+  cursor: ${props => (props.selector ? "wait" : "pointer")};
   img {
     height: ${props => props.width * 0.6}px;
     width: ${props => props.width * 0.6}px;
@@ -62,47 +62,75 @@ const AddIconContainer = styled.div`
   margin-bottom: 50px;
 `;
 
-const Home = ({ setMode, setMeal, setOneMealId, meals, mealIds }) => {
-  const [imagesArray, setImagesArray] = useState([]);
+const Home = ({
+  setMode,
+  setMeal,
+  setOneMealId,
+  meals,
+  mealIds,
+  imagesArray
+}) => {
+  const chooseTime = 5000;
+  const initialLoopTime = 200;
   const [image, setImage] = useState("");
+  const [selector, setSelector] = useState(false);
+  const [linearLoopTime, setLinearLoopTime] = useState(initialLoopTime);
+  const [index, setIndex] = useState(0);
   const { height, width } = useWindowDimensions();
 
   const randomSelector = () => {
     if (!mealIds || mealIds.length < 1) {
       alert("Please add a meal to get started");
+    } else {
+      if (selector === false) {
+        setSelector(true);
+        const timer = setTimeout(() => {
+          let randomNum = Math.floor(Math.random() * mealIds.length);
+          let oneMealId = mealIds[randomNum].id;
+          setOneMealId(oneMealId);
+          let oneMeal = meals.filter(x => x.id === oneMealId);
+          setMeal(oneMeal[0]);
+          setMode("view");
+        }, chooseTime);
+        return () => clearTimeout(timer);
+      }
     }
-    let randomNum = Math.floor(Math.random() * mealIds.length);
-    let oneMealId = mealIds[randomNum].id;
-    setOneMealId(oneMealId);
-    let oneMeal = meals.filter(x => x.id === oneMealId);
-    setMeal(oneMeal[0]);
-    setMode("view");
   };
 
   useEffect(() => {
-    const mealImages = meals => {
-      let newImageArray = [];
-      for (let mealObj of meals) {
-        newImageArray.push(mealObj.mealData.imgUrl);
-      }
-      setImagesArray(newImageArray);
+    const calculateNewLoopTime = () => {
+      let currentTime =
+        chooseTime -
+        (chooseTime / initialLoopTime) * linearLoopTime +
+        linearLoopTime;
+      setLinearLoopTime(
+        initialLoopTime * ((chooseTime - currentTime) / chooseTime)
+      );
     };
-    mealImages(meals);
-  }, [meals]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      let randomNum = Math.floor(Math.random() * imagesArray.length);
-      setImage(imagesArray[randomNum]);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [meals]);
+    if (selector === false) {
+      if (imagesArray.length > 0) {
+        let index = 0;
+        const interval = setInterval(() => {
+          index = (index + 1) % imagesArray.length;
+          setImage(imagesArray[index]);
+        }, initialLoopTime);
+        return () => clearInterval(interval);
+      }
+    } else {
+      const timer = setTimeout(() => {
+        calculateNewLoopTime();
+        setIndex((index + 1) % imagesArray.length);
+        setImage(imagesArray[index]);
+      }, linearLoopTime);
+      return () => clearTimeout(timer);
+    }
+  }, [imagesArray, selector, linearLoopTime]);
 
   return (
     <HomeContainer height={height}>
       <PlateContainer>
         <img src={plateImg} alt="plate" />
-        <ImageContainer width={width}>
+        <ImageContainer width={width} selector={selector}>
           <img
             src={image ? image : white}
             alt="food"
@@ -121,7 +149,8 @@ const Home = ({ setMode, setMeal, setOneMealId, meals, mealIds }) => {
 Home.propTypes = {
   setMode: PropTypes.func,
   setOneMealId: PropTypes.func,
-  setMeal: PropTypes.func
+  setMeal: PropTypes.func,
+  imagesArray: PropTypes.array
 };
 
 export default Home;

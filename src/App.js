@@ -21,6 +21,7 @@ function App() {
   const [meal, setMeal] = useState({});
   const [oneMealId, setOneMealId] = useState();
   const [mealIds, setMealIds] = useState([]);
+  const [imagesArray, setImagesArray] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,6 +43,17 @@ function App() {
     fetchData();
   }, [meal]);
 
+  useEffect(() => {
+    const mealImages = meals => {
+      let newImageArray = [];
+      for (let mealObj of meals) {
+        newImageArray.push(mealObj.mealData.imgUrl);
+      }
+      setImagesArray(newImageArray);
+    };
+    mealImages(meals);
+  }, [meals]);
+
   return (
     <OuterPageContainer>
       {mode === "home" && (
@@ -51,6 +63,7 @@ function App() {
           setOneMealId={setOneMealId}
           meals={meals}
           mealIds={mealIds}
+          imagesArray={imagesArray}
         />
       )}
       {(mode === "add" || mode === "edit") && (
