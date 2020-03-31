@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./theme.js";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import plateImg from "./images/plateImg.png";
+import white from "./images/white.png";
 import useWindowDimensions from "./helpers/useWindowDimensions";
 
 const HomeContainer = styled.div`
@@ -36,12 +37,22 @@ const PlateContainer = styled.div`
   }
 `;
 
-const SelectIconContainer = styled.div`
-  font-size: 50px;
-  color: black;
-  cursor: pointer;
+const ImageContainer = styled.div`
+  height: ${props => props.width * 0.6}px;
+  width: ${props => props.width * 0.6}px;
+  max-width: 300px;
+  max-height: 300px;
+  border-radius: 50%;
   position: absolute;
   margin: auto;
+  cursor: pointer;
+  img {
+    height: ${props => props.width * 0.6}px;
+    width: ${props => props.width * 0.6}px;
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 50%;
+  }
 `;
 
 const AddIconContainer = styled.div`
@@ -52,6 +63,10 @@ const AddIconContainer = styled.div`
 `;
 
 const Home = ({ setMode, setMeal, setOneMealId, meals, mealIds }) => {
+  const [imagesArray, setImagesArray] = useState([]);
+  const [image, setImage] = useState("");
+  const { height, width } = useWindowDimensions();
+
   const randomSelector = () => {
     if (!mealIds || mealIds.length < 1) {
       alert("Please add a meal to get started");
@@ -64,16 +79,37 @@ const Home = ({ setMode, setMeal, setOneMealId, meals, mealIds }) => {
     setMode("view");
   };
 
-  const { height, width } = useWindowDimensions();
+  useEffect(() => {
+    const mealImages = meals => {
+      let newImageArray = [];
+      for (let mealObj of meals) {
+        newImageArray.push(mealObj.mealData.imgUrl);
+      }
+      setImagesArray(newImageArray);
+    };
+    mealImages(meals);
+  }, [meals]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      let randomNum = Math.floor(Math.random() * imagesArray.length);
+      setImage(imagesArray[randomNum]);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [meals]);
 
   return (
     <HomeContainer height={height}>
       <PlateContainer>
         <img src={plateImg} alt="plate" />
-        <SelectIconContainer>
-          {/* to-do: add image flasher */}
-          <FontAwesomeIcon onClick={() => randomSelector()} icon={faPlus} />
-        </SelectIconContainer>
+        <ImageContainer width={width}>
+          <img
+            src={image ? image : white}
+            alt="food"
+            width={width}
+            onClick={() => randomSelector()}
+          />
+        </ImageContainer>
       </PlateContainer>
       <AddIconContainer>
         <FontAwesomeIcon onClick={() => setMode("add")} icon={faPlus} />

@@ -2,11 +2,11 @@ import React, { useRef, useState } from "react";
 import ReactAvatarEditor from "react-avatar-editor";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import white from "./images/white.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import useWindowDimensions from "./helpers/useWindowDimensions";
 import plateImg from "./images/plateImg.png";
+import white from "./images/white.png";
 
 const acceptedFileTypes =
   "image/x-png, image/png, image/jpg, image/jpeg, image/gif";
