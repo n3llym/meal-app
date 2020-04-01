@@ -16,7 +16,7 @@ const OuterPageContainer = styled.div`
 `;
 
 function App() {
-  const [mode, setMode] = useState("home");
+  const [mode, setMode] = useState("add");
   const [meals, setMeals] = useState([]);
   const [meal, setMeal] = useState({});
   const [oneMealId, setOneMealId] = useState();
@@ -47,7 +47,9 @@ function App() {
     const mealImages = meals => {
       let newImageArray = [];
       for (let mealObj of meals) {
-        newImageArray.push(mealObj.mealData.imgUrl);
+        if (mealObj.mealData.imgUrl !== "") {
+          newImageArray.push(mealObj.mealData.imgUrl);
+        }
       }
       setImagesArray(newImageArray);
     };

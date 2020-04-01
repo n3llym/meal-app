@@ -96,15 +96,6 @@ const LabelAndInputContainer = styled.div`
   }
 `;
 
-const SaveButton = styled.button`
-  border-radius: 4px;
-  padding: 5px;
-  width: 150px;
-  align-self: center;
-  margin-top: 15px;
-  color: gray;
-`;
-
 const ImageCropper = ({
   firebaseUpload,
   imageAsFile,
@@ -128,12 +119,14 @@ const ImageCropper = ({
   const handleScale = e => {
     const scale = parseFloat(e.target.value);
     setScale(scale);
+    onClickSave();
   };
 
   const handleRotation = e => {
     const rotation = e.target.value;
     console.log(rotation);
     setRotation(rotation);
+    onClickSave();
   };
 
   const onClickSave = () => {
@@ -148,7 +141,7 @@ const ImageCropper = ({
   const imagePreview = () => {
     if (imageAsFile) {
       return imageAsFile;
-    } else if (mode === "edit") {
+    } else if (mode === "edit" && imageUrl !== "") {
       return imageUrl;
     } else {
       return white;
@@ -222,18 +215,12 @@ const ImageCropper = ({
           />
         </LabelAndInputContainer>
       </ControlsContainer>
-      <SaveButton
-        onClick={() => onClickSave()}
-        disabled={imageAsFile ? false : true}
-      >
-        Save Image
-      </SaveButton>
     </>
   );
 };
 
 ImageCropper.propTypes = {
-  imageAsFile: PropTypes.string,
+  imageAsFile: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   firebaseUpload: PropTypes.func,
   setImageAsFile: PropTypes.func,
   mode: PropTypes.string,

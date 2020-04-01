@@ -3,7 +3,6 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import firebase from "firebase";
 import { storage } from "./firebase";
-import plateImg from "./images/plateImg.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
 import { checkValid } from "./helpers/functions.js";
@@ -11,8 +10,7 @@ import ImageCropper from "./ImageEditor";
 import useWindowDimensions from "./helpers/useWindowDimensions";
 
 const OuterContainer = styled.div`
-  height: ${props => props.height - 1}px;
-  height: 100%;
+  height: ${props => props.windowHeight - 1}px;
   width: 100vw;
   overflow: scroll;
   display: flex;
@@ -46,21 +44,7 @@ const InnerContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  height: ${props => props.height - 1}px;
-`;
-
-const PlateContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  justify-content: center;
-  margin: 0 5px;
-  .plate {
-    width: 90vw;
-    height: auto;
-    max-width: 450px;
-  }
+  height: auto;
 `;
 
 const TitleInput = styled.div`
@@ -95,6 +79,9 @@ const DescriptionNotesInput = styled.div`
   margin: 15px 0;
   font-size: 1rem;
   width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   input {
     font-size: 1rem;
     border: none;
@@ -103,6 +90,7 @@ const DescriptionNotesInput = styled.div`
     border-radius: 4px;
     height: auto;
     margin: 0 15px 15px 15px;
+    padding: 2px 5px;
     width: -webkit-fill-available;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -111,12 +99,16 @@ const DescriptionNotesInput = styled.div`
     &::-webkit-scrollbar {
       display: none;
     }
+    @media (min-width: 1025px) {
+      width: 79%;
+      max-width: 690px;
+    }
     &:focus::placeholder {
       color: transparent;
     }
   }
   textarea {
-    height: auto;
+    height: 60px;
     font-size: 1rem;
     border: none;
     color: gray;
@@ -128,6 +120,10 @@ const DescriptionNotesInput = styled.div`
     overflow-y: scroll;
     &::-webkit-scrollbar {
       display: none;
+    }
+    @media (min-width: 1025px) {
+      width: 79%;
+      max-width: 690px;
     }
     &:focus::placeholder {
       color: transparent;
@@ -155,23 +151,6 @@ const DeleteIconContainer = styled.div`
   color: red;
   margin-bottom: 15px;
   cursor: pointer;
-`;
-
-const ImageContainer = styled.div`
-  height: 250px;
-  width: 250px;
-  border-radius: 50%;
-  contain: content;
-  position: absolute;
-  img {
-    height: 250px;
-    width: 250px;
-    object-fit: cover;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    border-radius: 50%;
-  }
 `;
 
 const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
@@ -261,9 +240,9 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
   };
 
   return (
-    <OuterContainer height={height}>
-      <AddNewContainer height={height}>
-        <InnerContainer height={height}>
+    <OuterContainer windowHeight={height}>
+      <AddNewContainer windowHeight={height}>
+        <InnerContainer mode={mode}>
           {mode === "add" && (
             <>
               <SaveButton onClick={onSave}>Save</SaveButton>
@@ -291,24 +270,13 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
               placeholder={"Meal"}
             />
           </TitleInput>
-          {(!mealData.imgUrl || mode === "edit") && (
-            <ImageCropper
-              firebaseUpload={handleFireBaseImageUpload}
-              imageAsFile={imageAsFile}
-              setImageAsFile={setImageAsFile}
-              imageUrl={mealData.imgUrl}
-              mode={mode}
-            />
-          )}
-          {mealData.imgUrl && mode !== "edit" && (
-            <PlateContainer>
-              <img src={plateImg} alt="plate" className="plate" />
-              <ImageContainer>
-                <img src={mealData.imgUrl} alt="food" />
-              </ImageContainer>
-            </PlateContainer>
-          )}
-
+          <ImageCropper
+            firebaseUpload={handleFireBaseImageUpload}
+            imageAsFile={imageAsFile}
+            setImageAsFile={setImageAsFile}
+            imageUrl={mealData.imgUrl}
+            mode={mode}
+          />
           <form>
             <DescriptionNotesInput>
               <input
