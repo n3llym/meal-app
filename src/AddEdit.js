@@ -253,6 +253,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
       ? meal.mealData.description
       : "",
     notes: checkValid(meal, "notes") ? meal.mealData.notes : "",
+    link: checkValid(meal, "link") ? meal.mealData.link : "",
     imgUrl: checkValid(meal, "imgUrl") ? meal.mealData.imgUrl : ""
   });
   const [scale, setScale] = useState(1);
@@ -271,6 +272,8 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
       db.collection("meals").add({ mealData: { ...mealData, imgUrl: value } });
     }
   }
+
+  console.log("mealData", mealData);
 
   async function onSave() {
     let promise = new Promise((resolve, reject) => {
@@ -344,7 +347,6 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
   const handleImageAsFile = e => {
     //todo - add drag and drop capacity
     const imageAsFile = e.target.files[0];
-    //deal with image rotation on iphone
     EXIF.getData(imageAsFile, function() {
       let orientation = EXIF.getTag(this, "Orientation");
       switch (orientation) {
@@ -502,7 +504,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
                 defaultValue={
                   mealData.description === "" ? "" : mealData.description
                 }
-                placeholder={"Description"}
+                placeholder="Description"
                 autoComplete="off"
               />
               <textarea
@@ -511,7 +513,18 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
                 name="notes"
                 onChange={event => handleChange("notes", event.target.value)}
                 defaultValue={mealData.notes === "" ? "" : mealData.notes}
-                placeholder={"Notes"}
+                placeholder="Notes"
+              />
+              <input
+                type="url"
+                id="link"
+                name="link"
+                onChange={event => handleChange("link", event.target.value)}
+                defaultValue={
+                  mealData.description === "" ? "" : mealData.description
+                }
+                placeholder="Links"
+                autoComplete="off"
               />
             </DescriptionNotesInput>
           </form>

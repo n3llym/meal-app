@@ -131,6 +131,11 @@ const StyledNotes = styled.div`
     margin: 15px;
     align-self: flex-start;
   }
+  a {
+    height: auto;
+    margin: 15px;
+    align-self: flex-start;
+  }
 `;
 
 const ViewOne = ({ setMode, meal, setMeal }) => {
@@ -166,7 +171,7 @@ const ViewOne = ({ setMode, meal, setMeal }) => {
         <DescriptionContainer>
           <p>{checkValid(meal, "description")}</p>
         </DescriptionContainer>
-        {checkValid(meal, "notes") && (
+        {(checkValid(meal, "notes") || <p>{checkValid(meal, "link")}</p>) && (
           <ViewNotesIconContainer
             onClick={() => setViewNotes(!viewNotes)}
             viewNotes={viewNotes}
@@ -176,6 +181,9 @@ const ViewOne = ({ setMode, meal, setMeal }) => {
         )}
         <StyledNotes viewNotes={viewNotes} height={height}>
           <p>{checkValid(meal, "notes")}</p>
+          <a href={meal.mealData.link} target="_blank">
+            {meal.mealData.link === "" ? "" : meal.mealData.link}
+          </a>
           <ViewNotesIconContainer>
             <FontAwesomeIcon
               icon={faChevronDown}
