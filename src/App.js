@@ -16,22 +16,12 @@ const OuterPageContainer = styled.div`
 `;
 
 function App() {
-  const [mode, setMode] = useState("add");
+  const [mode, setMode] = useState("home");
   const [meals, setMeals] = useState([]);
   const [meal, setMeal] = useState({});
   const [oneMealId, setOneMealId] = useState();
   const [mealIds, setMealIds] = useState([]);
   const [imagesArray, setImagesArray] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const db = firebase.firestore();
-      const data = await db.collection("meals").get();
-      setMeals(data.docs.map(doc => ({ ...doc.data(), id: doc.id })));
-      setMealIds(data.docs.map(doc => ({ id: doc.id })));
-    };
-    fetchData();
-  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
