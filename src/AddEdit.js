@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import firebase from "firebase";
@@ -6,8 +6,14 @@ import { storage } from "./firebase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
 import { checkValid } from "./helpers/functions.js";
-import ImageCropper from "./ImageEditor";
 import useWindowDimensions from "./helpers/useWindowDimensions";
+import ReactAvatarEditor from "react-avatar-editor";
+import { faImage } from "@fortawesome/free-regular-svg-icons";
+import plateImg from "./images/plateImg.png";
+import white from "./images/white.png";
+
+const acceptedFileTypes =
+  "image/x-png, image/png, image/jpg, image/jpeg, image/gif";
 
 const OuterContainer = styled.div`
   height: ${props => props.windowHeight - 1}px;
@@ -153,6 +159,91 @@ const DeleteIconContainer = styled.div`
   cursor: pointer;
 `;
 
+const PlateContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  justify-content: center;
+  .plate {
+    width: 90vw;
+    height: auto;
+    max-width: 450px;
+    position: relative;
+  }
+`;
+
+const AvatarAndUploaderContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0);
+  position: absolute;
+  canvas {
+    border-radius: 50%;
+    height: ${props => props.width * 0.6}px;
+    width: ${props => props.width * 0.6}px;
+    max-width: 300px;
+    max-height: 300px;
+  }
+`;
+
+const AvatarEditorContainer = styled.div`
+  height: ${props => props.width * 0.6}px;
+  width: ${props => props.width * 0.6}px;
+  max-width: 300px;
+  max-height: 300px;
+  contain: content;
+  border-radius: 50%;
+  position: relative;
+  background: rgba(0, 0, 0, 0);
+`;
+
+const FileUploaderButton = styled.label`
+  position: absolute;
+  cursor: pointer;
+  font-size: 40px;
+  z-index: 2;
+  visibility: ${props => props.imageAsFile && "hidden"};
+  color: ${props => (props.imageUrl ? "white" : "gray")};
+`;
+
+const HiddenFileInput = styled.input`
+  position: absolute;
+  border: none;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  &:focus {
+    outline: none;
+  }
+`;
+
+const ControlsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  label {
+    font-size: 0.5rem;
+  }
+  input {
+    color: red;
+    margin: 5px;
+  }
+`;
+
+const LabelAndInputContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  input {
+    width: 200px;
+  }
+`;
+
 const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
   const [imageAsFile, setImageAsFile] = useState("");
   const [mealData, setMealData] = useState({
@@ -163,15 +254,51 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
     notes: checkValid(meal, "notes") ? meal.mealData.notes : "",
     imgUrl: checkValid(meal, "imgUrl") ? meal.mealData.imgUrl : ""
   });
-  const { height } = useWindowDimensions();
+  const [scale, setScale] = useState(1);
+  const [rotation, setRotation] = useState(0);
 
-  const onSave = () => {
+  const { height, width } = useWindowDimensions();
+  const editor = useRef();
+
+  async function onSave() {
+    let promise = new Promise((resolve, reject) => {
+      if (editor && imageAsFile !== "") {
+        const canvas = editor.current.getImageScaledToCanvas();
+        canvas.toBlob(e => {
+          const uploadTask = storage.ref(`/images/${imageAsFile.name}`).put(e);
+          uploadTask.on(
+            "state_changed",
+            snapShot => {
+              console.log(snapShot);
+            },
+            err => {
+              reject(console.log(err));
+            },
+            () => {
+              storage
+                .ref("images")
+                .child(imageAsFile.name)
+                .getDownloadURL()
+                .then(fireBaseUrl => {
+                  resolve(fireBaseUrl);
+                });
+            }
+          );
+        });
+      } else {
+        resolve("");
+      }
+    });
     const db = firebase.firestore();
-    db.collection("meals").add({ mealData });
-    setMeal({ mealData: mealData });
-    setImageAsFile("");
-    setMode("view");
-  };
+    let value = await promise;
+    await promise
+      .then(
+        db.collection("meals").add({ mealData: { ...mealData, imgUrl: value } })
+      )
+      .then(setMeal({ mealData: { ...mealData, imgUrl: value } }))
+      .then(setImageAsFile(""))
+      .then(setMode("view"));
+  }
 
   const onUpdate = () => {
     //to-do: add ability to update photo
@@ -180,7 +307,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
       .doc(oneMealId)
       .set({ mealData });
     setMeal({ mealData: mealData });
-    setMode("view");
+    // setMode("view");
   };
 
   const handleFireBaseImageDelete = () => {
@@ -206,37 +333,39 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
     setMode("home");
   };
 
-  const handleFireBaseImageUpload = e => {
-    const uploadTask = storage.ref(`/images/${imageAsFile.name}`).put(e);
-
-    uploadTask.on(
-      "state_changed",
-      snapShot => {
-        console.log(snapShot);
-      },
-      err => {
-        console.log(err);
-      },
-      () => {
-        storage
-          .ref("images")
-          .child(imageAsFile.name)
-          .getDownloadURL()
-          .then(fireBaseUrl => {
-            setMealData(prevObject => ({
-              ...prevObject,
-              imgUrl: fireBaseUrl
-            }));
-          });
-      }
-    );
-  };
-
   const handleChange = (field, value) => {
     setMealData(mealData => ({
       ...mealData,
       [field]: value
     }));
+  };
+
+  const handleImageAsFile = e => {
+    const imageAsFile = e.target.files[0];
+    if (imageAsFile === "") {
+      console.error(`not an image, the image file is a ${typeof imageAsFile}`);
+    }
+    setImageAsFile(imageAsFile);
+  };
+
+  const handleScale = e => {
+    const scale = parseFloat(e.target.value);
+    setScale(scale);
+  };
+
+  const handleRotation = e => {
+    const rotation = e.target.value;
+    setRotation(rotation);
+  };
+
+  const imagePreview = () => {
+    if (imageAsFile) {
+      return imageAsFile;
+    } else if (mode === "edit" && checkValid(meal, "imgUrl") !== "") {
+      return checkValid(meal, "imgUrl");
+    } else {
+      return white;
+    }
   };
 
   return (
@@ -270,13 +399,73 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
               placeholder={"Meal"}
             />
           </TitleInput>
-          <ImageCropper
-            firebaseUpload={handleFireBaseImageUpload}
-            imageAsFile={imageAsFile}
-            setImageAsFile={setImageAsFile}
-            imageUrl={mealData.imgUrl}
-            mode={mode}
-          />
+          <>
+            <PlateContainer>
+              <img src={plateImg} alt="plate" className="plate" />
+              <AvatarAndUploaderContainer width={width}>
+                <FileUploaderButton
+                  htmlFor="image"
+                  className="imageUploader"
+                  imageAsFile={imageAsFile}
+                  imageUrl={checkValid(meal, "imgUrl")}
+                >
+                  <FontAwesomeIcon icon={faImage} />{" "}
+                </FileUploaderButton>
+                <HiddenFileInput
+                  type="file"
+                  id="image"
+                  name="image"
+                  className="fileinput"
+                  onChange={handleImageAsFile}
+                  accept={acceptedFileTypes}
+                  multiple={false}
+                />
+                <AvatarEditorContainer width={width}>
+                  <ReactAvatarEditor
+                    ref={editor}
+                    image={imagePreview()}
+                    width={width * 0.6}
+                    height={width * 0.6}
+                    scale={parseFloat(scale)}
+                    border={0}
+                    borderRadius={150}
+                    rotate={rotation}
+                    color={[255, 255, 255, 0]}
+                  />
+                </AvatarEditorContainer>
+              </AvatarAndUploaderContainer>
+            </PlateContainer>
+            <ControlsContainer>
+              <LabelAndInputContainer>
+                <label htmlFor="scale">Zoom</label>
+                <input
+                  name="scale"
+                  id="scale"
+                  type="range"
+                  onChange={handleScale}
+                  min="1"
+                  max="2"
+                  step="0.01"
+                  defaultValue="1"
+                  disabled={imageAsFile ? false : true}
+                />
+              </LabelAndInputContainer>
+              <LabelAndInputContainer>
+                <label htmlFor="rotation">Rotate</label>
+                <input
+                  name="rotation"
+                  id="rotation"
+                  type="range"
+                  onChange={handleRotation}
+                  min="1"
+                  max="360"
+                  step="10"
+                  defaultValue="0"
+                  disabled={imageAsFile ? false : true}
+                />
+              </LabelAndInputContainer>
+            </ControlsContainer>
+          </>
           <form>
             <DescriptionNotesInput>
               <input
