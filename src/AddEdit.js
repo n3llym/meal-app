@@ -260,47 +260,18 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
   const { height, width } = useWindowDimensions();
   const editor = useRef();
 
-  async function onSave() {
-    let promise = new Promise((resolve, reject) => {
-      if (editor && imageAsFile !== "") {
-        const canvas = editor.current.getImageScaledToCanvas();
-        canvas.toBlob(e => {
-          const uploadTask = storage.ref(`/images/${imageAsFile.name}`).put(e);
-          uploadTask.on(
-            "state_changed",
-            snapShot => {
-              console.log(snapShot);
-            },
-            err => {
-              reject(console.log(err));
-            },
-            () => {
-              storage
-                .ref("images")
-                .child(imageAsFile.name)
-                .getDownloadURL()
-                .then(fireBaseUrl => {
-                  resolve(fireBaseUrl);
-                });
-            }
-          );
-        });
-      } else {
-        resolve("");
-      }
-    });
+  function addOrEditConditional(value) {
     const db = firebase.firestore();
-    let value = await promise;
-    await promise
-      .then(
-        db.collection("meals").add({ mealData: { ...mealData, imgUrl: value } })
-      )
-      .then(setMeal({ mealData: { ...mealData, imgUrl: value } }))
-      .then(setImageAsFile(""))
-      .then(setMode("view"));
+    if (mode === "edit") {
+      db.collection("meals")
+        .doc(oneMealId)
+        .set({ mealData: { ...mealData, imgUrl: value } });
+    } else {
+      db.collection("meals").add({ mealData: { ...mealData, imgUrl: value } });
+    }
   }
 
-  async function onUpdate() {
+  async function onSave() {
     let promise = new Promise((resolve, reject) => {
       if (editor && imageAsFile !== "") {
         const canvas = editor.current.getImageScaledToCanvas();
@@ -331,19 +302,12 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
         resolve("");
       }
     });
-    const db = firebase.firestore();
     let value = await promise;
     await promise
-      .then(
-        db
-          .collection("meals")
-          .doc(oneMealId)
-          .set({ mealData: { ...mealData, imgUrl: value } })
-      )
       .then(setMeal({ mealData: { ...mealData, imgUrl: value } }))
+      .then(addOrEditConditional(value))
       .then(setImageAsFile(""))
       .then(setMode("view"));
-    //to-do: add ability to update photo
   }
 
   const handleFireBaseImageDelete = () => {
@@ -377,6 +341,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
   };
 
   const handleImageAsFile = e => {
+    //todo - add drag and drop capacity
     const imageAsFile = e.target.files[0];
     if (imageAsFile === "") {
       console.error(`not an image, the image file is a ${typeof imageAsFile}`);
@@ -408,8 +373,6 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
     }
   };
 
-  console.log(checkValid(meal, "imgUrl"));
-
   return (
     <OuterContainer windowHeight={height}>
       <AddNewContainer windowHeight={height}>
@@ -424,7 +387,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
           )}
           {mode === "edit" && (
             <>
-              <SaveButton onClick={onUpdate}>Update</SaveButton>
+              <SaveButton onClick={onSave}>Update</SaveButton>
               <CancelButton onClick={() => setMode("view")}>
                 Cancel
               </CancelButton>
@@ -439,6 +402,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
               onChange={event => handleChange("title", event.target.value)}
               defaultValue={mealData.title === "" ? "" : mealData.title}
               placeholder={"Meal"}
+              autocomplete="off"
             />
           </TitleInput>
           <>
@@ -521,6 +485,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
                   mealData.description === "" ? "" : mealData.description
                 }
                 placeholder={"Description"}
+                autocomplete="off"
               />
               <textarea
                 type="text"

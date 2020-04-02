@@ -16,7 +16,7 @@ const OuterPageContainer = styled.div`
 `;
 
 function App() {
-  const [mode, setMode] = useState("home");
+  const [mode, setMode] = useState("add");
   const [meals, setMeals] = useState([]);
   const [meal, setMeal] = useState({});
   const [oneMealId, setOneMealId] = useState();
