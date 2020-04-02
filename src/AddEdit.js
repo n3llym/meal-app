@@ -11,6 +11,7 @@ import ReactAvatarEditor from "react-avatar-editor";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import plateImg from "./images/plateImg.png";
 import white from "./images/white.png";
+import EXIF from "exif-js";
 
 const acceptedFileTypes =
   "image/x-png, image/png, image/jpg, image/jpeg, image/gif";
@@ -343,6 +344,23 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
   const handleImageAsFile = e => {
     //todo - add drag and drop capacity
     const imageAsFile = e.target.files[0];
+    //deal with image rotation on iphone
+    EXIF.getData(imageAsFile, function() {
+      let orientation = EXIF.getTag(this, "Orientation");
+      switch (orientation) {
+        case 8:
+          setRotation(270);
+          break;
+        case 6:
+          setRotation(90);
+          break;
+        case 3:
+          setRotation(180);
+          break;
+        default:
+          setRotation(0);
+      }
+    });
     if (imageAsFile === "") {
       console.error(`not an image, the image file is a ${typeof imageAsFile}`);
     }
@@ -402,7 +420,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
               onChange={event => handleChange("title", event.target.value)}
               defaultValue={mealData.title === "" ? "" : mealData.title}
               placeholder={"Meal"}
-              autocomplete="off"
+              autoComplete="off"
             />
           </TitleInput>
           <>
@@ -485,7 +503,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
                   mealData.description === "" ? "" : mealData.description
                 }
                 placeholder={"Description"}
-                autocomplete="off"
+                autoComplete="off"
               />
               <textarea
                 type="text"
