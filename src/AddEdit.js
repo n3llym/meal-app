@@ -300,15 +300,51 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
       .then(setMode("view"));
   }
 
-  const onUpdate = () => {
-    //to-do: add ability to update photo
+  async function onUpdate() {
+    let promise = new Promise((resolve, reject) => {
+      if (editor && imageAsFile !== "") {
+        const canvas = editor.current.getImageScaledToCanvas();
+        canvas.toBlob(e => {
+          const uploadTask = storage.ref(`/images/${imageAsFile.name}`).put(e);
+          uploadTask.on(
+            "state_changed",
+            snapShot => {
+              console.log(snapShot);
+            },
+            err => {
+              reject(console.log(err));
+            },
+            () => {
+              storage
+                .ref("images")
+                .child(imageAsFile.name)
+                .getDownloadURL()
+                .then(fireBaseUrl => {
+                  resolve(fireBaseUrl);
+                });
+            }
+          );
+        });
+      } else if (checkValid(meal, "imgUrl")) {
+        resolve(checkValid(meal, "imgUrl"));
+      } else {
+        resolve("");
+      }
+    });
     const db = firebase.firestore();
-    db.collection("meals")
-      .doc(oneMealId)
-      .set({ mealData });
-    setMeal({ mealData: mealData });
-    // setMode("view");
-  };
+    let value = await promise;
+    await promise
+      .then(
+        db
+          .collection("meals")
+          .doc(oneMealId)
+          .set({ mealData: { ...mealData, imgUrl: value } })
+      )
+      .then(setMeal({ mealData: { ...mealData, imgUrl: value } }))
+      .then(setImageAsFile(""))
+      .then(setMode("view"));
+    //to-do: add ability to update photo
+  }
 
   const handleFireBaseImageDelete = () => {
     if (checkValid(meal, "imgUrl")) {
@@ -334,7 +370,6 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
   };
 
   const handleChange = (field, value) => {
-    console.log("within handleChange");
     setMealData(mealData => ({
       ...mealData,
       [field]: value
@@ -362,12 +397,18 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
   const imagePreview = () => {
     if (imageAsFile) {
       return imageAsFile;
-    } else if (mode === "edit" && checkValid(meal, "imgUrl") !== "") {
+    } else if (
+      mode === "edit" &&
+      checkValid(meal, "imgUrl") &&
+      checkValid(meal, "imgUrl") !== ""
+    ) {
       return checkValid(meal, "imgUrl");
     } else {
       return white;
     }
   };
+
+  console.log(checkValid(meal, "imgUrl"));
 
   return (
     <OuterContainer windowHeight={height}>
