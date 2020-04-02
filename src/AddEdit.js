@@ -334,6 +334,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
   };
 
   const handleChange = (field, value) => {
+    console.log("within handleChange");
     setMealData(mealData => ({
       ...mealData,
       [field]: value
