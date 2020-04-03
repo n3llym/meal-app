@@ -138,7 +138,7 @@ const StyledNotes = styled.div`
   }
 `;
 
-const ViewOne = ({ setMode, meal, setMeal }) => {
+const ViewOne = ({ setMode, meal, setMeal, previousMode }) => {
   const [viewNotes, setViewNotes] = useState(false);
   const { height, width } = useWindowDimensions();
 
@@ -150,7 +150,7 @@ const ViewOne = ({ setMode, meal, setMeal }) => {
             icon={faChevronLeft}
             onClick={() => {
               setMeal("");
-              setMode("home");
+              setMode(previousMode);
             }}
           />
         </BackIconContainer>
@@ -181,7 +181,11 @@ const ViewOne = ({ setMode, meal, setMeal }) => {
         )}
         <StyledNotes viewNotes={viewNotes} height={height}>
           <p>{checkValid(meal, "notes")}</p>
-          <a href={meal.mealData.link} target="_blank">
+          <a
+            href={meal.mealData.link}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             {meal.mealData.link === "" ? "" : meal.mealData.link}
           </a>
           <ViewNotesIconContainer>

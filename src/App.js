@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Home from "./Home";
 import AddEdit from "./AddEdit";
 import ViewOne from "./ViewOne";
+import Admin from "./Admin";
 import theme from "./theme";
 import firebase from "./firebase";
 
@@ -16,12 +17,13 @@ const OuterPageContainer = styled.div`
 `;
 
 function App() {
-  const [mode, setMode] = useState("home");
+  const [mode, setMode] = useState("admin");
   const [meals, setMeals] = useState([]);
   const [meal, setMeal] = useState({});
   const [oneMealId, setOneMealId] = useState();
   const [mealIds, setMealIds] = useState([]);
   const [imagesArray, setImagesArray] = useState([]);
+  const [previousMode, setPreviousMode] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,6 +58,7 @@ function App() {
           meals={meals}
           mealIds={mealIds}
           imagesArray={imagesArray}
+          setPreviousMode={setPreviousMode}
         />
       )}
       {(mode === "add" || mode === "edit") && (
@@ -76,6 +79,18 @@ function App() {
           mode={mode}
           meals={meals}
           setMeal={setMeal}
+          previousMode={previousMode}
+        />
+      )}
+      {mode === "admin" && (
+        <Admin
+          setMode={setMode}
+          setMeal={setMeal}
+          setOneMealId={setOneMealId}
+          meals={meals}
+          mealIds={mealIds}
+          imagesArray={imagesArray}
+          setPreviousMode={setPreviousMode}
         />
       )}
     </OuterPageContainer>

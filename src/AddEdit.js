@@ -23,7 +23,7 @@ const OuterContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  &::-webkit-scrollbar {
+  &::--scrollbar {
     display: none !important;
   }
 `;
@@ -252,7 +252,7 @@ const LabelAndInputContainer = styled.div`
   }
 `;
 
-const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
+const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
   const [imageAsFile, setImageAsFile] = useState("");
   const [mealData, setMealData] = useState({
     title: checkValid(meal, "title") ? meal.mealData.title : "",
@@ -414,7 +414,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
           {mode === "edit" && (
             <>
               <SaveButton onClick={onSave}>Update</SaveButton>
-              <CancelButton onClick={() => setMode("view")}>
+              <CancelButton onClick={() => setMode(previousMode)}>
                 Cancel
               </CancelButton>
             </>

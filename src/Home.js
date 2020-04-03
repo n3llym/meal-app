@@ -68,6 +68,7 @@ const AddIconContainer = styled.div`
 
 const Home = ({
   setMode,
+  setPreviousMode,
   setMeal,
   setOneMealId,
   meals,
@@ -105,6 +106,7 @@ const Home = ({
           setOneMealId(oneMealId);
           let oneMeal = meals.filter(x => x.id === oneMealId);
           setMeal(oneMeal[0]);
+          setPreviousMode("home");
           setMode("view");
         }, chooseTime);
         return () => clearTimeout(timer);
@@ -143,6 +145,7 @@ const Home = ({
 
   return (
     <HomeContainer height={height}>
+      <div onClick={() => setMode("admin")}>Admin</div>
       <PlateContainer pressFeedback={pressFeedback}>
         <img src={plateImg} alt="plate" />
         <ImageContainer
