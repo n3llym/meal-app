@@ -31,15 +31,17 @@ const PlateContainer = styled.div`
   justify-content: center;
   margin-top: 85px;
   img {
-    width: 90vw;
+    width: ${props => (props.pressFeedback === false ? 90 : 88)}vw;
     height: auto;
     max-width: 450px;
   }
 `;
 
 const ImageContainer = styled.div`
-  height: ${props => props.width * 0.6}px;
-  width: ${props => props.width * 0.6}px;
+  height: ${props =>
+    props.pressFeedback === false ? props.width * 0.6 : props.width * 0.58}px;
+  width: ${props =>
+    props.pressFeedback === false ? props.width * 0.6 : props.width * 0.58}px;
   max-width: 300px;
   max-height: 300px;
   border-radius: 50%;
@@ -47,8 +49,10 @@ const ImageContainer = styled.div`
   margin: auto;
   cursor: ${props => (props.selector ? "wait" : "pointer")};
   img {
-    height: ${props => props.width * 0.6}px;
-    width: ${props => props.width * 0.6}px;
+    height: ${props =>
+      props.pressFeedback === false ? props.width * 0.6 : props.width * 0.58}px;
+    width: ${props =>
+      props.pressFeedback === false ? props.width * 0.6 : props.width * 0.58}px;
     max-width: 300px;
     max-height: 300px;
     border-radius: 50%;
@@ -76,7 +80,18 @@ const Home = ({
   const [selector, setSelector] = useState(false);
   const [linearLoopTime, setLinearLoopTime] = useState(initialLoopTime);
   const [index, setIndex] = useState(0);
+  const [pressFeedback, setPressFeedback] = useState(false);
   const { height, width } = useWindowDimensions();
+
+  const handleFeedback = () => {
+    if (selector === false) {
+      setPressFeedback(true);
+      let feedbackTimer = setTimeout(() => {
+        setPressFeedback(false);
+      }, 500);
+      return () => clearTimeout(feedbackTimer);
+    }
+  };
 
   const randomSelector = () => {
     if (!mealIds || mealIds.length < 1) {
@@ -128,14 +143,19 @@ const Home = ({
 
   return (
     <HomeContainer height={height}>
-      <PlateContainer>
+      <PlateContainer pressFeedback={pressFeedback}>
         <img src={plateImg} alt="plate" />
-        <ImageContainer width={width} selector={selector}>
+        <ImageContainer
+          width={width}
+          selector={selector}
+          pressFeedback={pressFeedback}
+        >
           <img
             src={image ? image : white}
             alt="food"
             width={width}
             onClick={() => randomSelector()}
+            onMouseDown={() => handleFeedback()}
           />
         </ImageContainer>
       </PlateContainer>
