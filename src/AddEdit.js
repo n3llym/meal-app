@@ -96,26 +96,33 @@ const DescriptionNotesInput = styled.div`
     background-color: #faf8f8;
     border-radius: 4px;
     height: auto;
-    margin: 0 15px 15px 15px;
+    margin: 0 15px 5px 15px;
     padding: 2px 5px;
     width: -webkit-fill-available;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: scroll;
+    &.link {
+      margin-top: 5px;
+    }
     &::-webkit-scrollbar {
       display: none;
     }
     @media (min-width: 1025px) {
       width: 79%;
       max-width: 690px;
+      margin: 0 15px 15px 15px;
+      &.link {
+        margin-top: 15px;
+      }
     }
     &:focus::placeholder {
       color: transparent;
     }
   }
   textarea {
-    height: 60px;
+    height: auto;
     font-size: 1rem;
     border: none;
     color: gray;
@@ -345,7 +352,6 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
   };
 
   const handleImageAsFile = e => {
-    //todo - add drag and drop capacity
     const imageAsFile = e.target.files[0];
     EXIF.getData(imageAsFile, function() {
       let orientation = EXIF.getTag(this, "Orientation");
@@ -519,11 +525,12 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
                 type="url"
                 id="link"
                 name="link"
+                className="link"
                 onChange={event => handleChange("link", event.target.value)}
                 defaultValue={
-                  mealData.description === "" ? "" : mealData.description
+                  mealData.link && mealData.link === "" ? "" : mealData.link
                 }
-                placeholder="Links"
+                placeholder="Link"
                 autoComplete="off"
               />
             </DescriptionNotesInput>

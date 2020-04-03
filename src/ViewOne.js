@@ -171,7 +171,7 @@ const ViewOne = ({ setMode, meal, setMeal }) => {
         <DescriptionContainer>
           <p>{checkValid(meal, "description")}</p>
         </DescriptionContainer>
-        {(checkValid(meal, "notes") || <p>{checkValid(meal, "link")}</p>) && (
+        {(checkValid(meal, "notes") || checkValid(meal, "link")) && (
           <ViewNotesIconContainer
             onClick={() => setViewNotes(!viewNotes)}
             viewNotes={viewNotes}
