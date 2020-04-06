@@ -57,6 +57,9 @@ const ImageContainer = styled.div`
     max-width: 300px;
     max-height: 300px;
     border-radius: 50%;
+    // stop IOS popup when user long holds on image
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
   }
 `;
 
@@ -95,7 +98,8 @@ const Home = ({
   const [pressFeedback, setPressFeedback] = useState(false);
   const { height, width } = useWindowDimensions();
 
-  const handleFeedback = () => {
+  const handleFeedback = (e) => {
+    e.preventDefault();
     if (selector === false) {
       setPressFeedback(true);
       let feedbackTimer = setTimeout(() => {
@@ -105,7 +109,8 @@ const Home = ({
     }
   };
 
-  const randomSelector = () => {
+  const randomSelector = (e) => {
+    e.preventDefault();
     if (!mealIds || mealIds.length < 1) {
       alert("Please add a meal to get started");
     } else {
@@ -167,8 +172,8 @@ const Home = ({
             src={image ? image : white}
             alt="food"
             width={width}
-            onClick={() => randomSelector()}
-            onMouseDown={() => handleFeedback()}
+            onClick={(e) => randomSelector(e)}
+            onMouseDown={(e) => handleFeedback(e)}
           />
         </ImageContainer>
       </PlateContainer>
