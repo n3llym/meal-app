@@ -4,6 +4,7 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import plateImg from "./images/plateImg.png";
 import white from "./images/white.png";
 import useWindowDimensions from "./helpers/useWindowDimensions";
@@ -15,7 +16,7 @@ const HomeContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  height: ${props => props.height - 1}px;
+  height: ${(props) => props.height - 1}px;
   contain: content;
   @media (min-width: 1025px) {
     width: 80%;
@@ -31,27 +32,27 @@ const PlateContainer = styled.div`
   justify-content: center;
   margin-top: 85px;
   img {
-    width: ${props => (props.pressFeedback === false ? 90 : 88)}vw;
+    width: ${(props) => (props.pressFeedback === false ? 90 : 88)}vw;
     height: auto;
     max-width: 450px;
   }
 `;
 
 const ImageContainer = styled.div`
-  height: ${props =>
+  height: ${(props) =>
     props.pressFeedback === false ? props.width * 0.6 : props.width * 0.58}px;
-  width: ${props =>
+  width: ${(props) =>
     props.pressFeedback === false ? props.width * 0.6 : props.width * 0.58}px;
   max-width: 300px;
   max-height: 300px;
   border-radius: 50%;
   position: absolute;
   margin: auto;
-  cursor: ${props => (props.selector ? "wait" : "pointer")};
+  cursor: ${(props) => (props.selector ? "wait" : "pointer")};
   img {
-    height: ${props =>
+    height: ${(props) =>
       props.pressFeedback === false ? props.width * 0.6 : props.width * 0.58}px;
-    width: ${props =>
+    width: ${(props) =>
       props.pressFeedback === false ? props.width * 0.6 : props.width * 0.58}px;
     max-width: 300px;
     max-height: 300px;
@@ -63,7 +64,17 @@ const AddIconContainer = styled.div`
   font-size: 25px;
   color: gray;
   cursor: pointer;
-  margin-bottom: 50px;
+  margin-bottom: 100px;
+  @media (min-width: 1025px) {
+    margin-bottom: 50px;
+  }
+`;
+
+const AdminIconContainer = styled.div`
+  position: fixed;
+  font-size: 25px;
+  bottom: 15px;
+  color: #dcdcdc;
 `;
 
 const Home = ({
@@ -73,7 +84,7 @@ const Home = ({
   setOneMealId,
   meals,
   mealIds,
-  imagesArray
+  imagesArray,
 }) => {
   const chooseTime = 5000;
   const initialLoopTime = 200;
@@ -104,7 +115,7 @@ const Home = ({
           let randomNum = Math.floor(Math.random() * mealIds.length);
           let oneMealId = mealIds[randomNum].id;
           setOneMealId(oneMealId);
-          let oneMeal = meals.filter(x => x.id === oneMealId);
+          let oneMeal = meals.filter((x) => x.id === oneMealId);
           setMeal(oneMeal[0]);
           setPreviousMode("home");
           setMode("view");
@@ -145,7 +156,6 @@ const Home = ({
 
   return (
     <HomeContainer height={height}>
-      <div onClick={() => setMode("admin")}>Admin</div>
       <PlateContainer pressFeedback={pressFeedback}>
         <img src={plateImg} alt="plate" />
         <ImageContainer
@@ -165,6 +175,12 @@ const Home = ({
       <AddIconContainer>
         <FontAwesomeIcon onClick={() => setMode("add")} icon={faPlus} />
       </AddIconContainer>
+      <AdminIconContainer>
+        <FontAwesomeIcon
+          onClick={() => setMode("admin")}
+          icon={faChevronDown}
+        />
+      </AdminIconContainer>
     </HomeContainer>
   );
 };
@@ -173,7 +189,7 @@ Home.propTypes = {
   setMode: PropTypes.func,
   setOneMealId: PropTypes.func,
   setMeal: PropTypes.func,
-  imagesArray: PropTypes.array
+  imagesArray: PropTypes.array,
 };
 
 export default Home;

@@ -12,7 +12,7 @@ const AdminContainer = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: ${props => props.height - 1}px;
+  height: ${(props) => props.height - 1}px;
   contain: content;
   @media (min-width: 1025px) {
     width: 80%;
@@ -45,9 +45,9 @@ const BackIconContainer = styled.div`
 
 const Admin = ({ setMode, meals, setMeal, setPreviousMode }) => {
   const { height } = useWindowDimensions();
-  const handleClick = id => {
+  const handleClick = (id) => {
     setPreviousMode("admin");
-    let oneMeal = meals.filter(x => x.id === id);
+    let oneMeal = meals.filter((x) => x.id === id);
     setMeal(oneMeal[0]);
     setMode("view");
   };
@@ -68,7 +68,7 @@ const Admin = ({ setMode, meals, setMeal, setPreviousMode }) => {
         />
       </BackIconContainer>
       <ListContainer>
-        {meals.map(meal => (
+        {meals.map((meal) => (
           <ListItem key={meal.id} onClick={() => handleClick(meal.id)}>
             {meal.mealData.title}
           </ListItem>
@@ -82,7 +82,7 @@ Admin.propTypes = {
   setMode: PropTypes.func,
   setOneMealId: PropTypes.func,
   setMeal: PropTypes.func,
-  imagesArray: PropTypes.array
+  imagesArray: PropTypes.array,
 };
 
 export default Admin;

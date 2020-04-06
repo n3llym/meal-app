@@ -17,7 +17,7 @@ const OuterPageContainer = styled.div`
 `;
 
 function App() {
-  const [mode, setMode] = useState("admin");
+  const [mode, setMode] = useState("home");
   const [meals, setMeals] = useState([]);
   const [meal, setMeal] = useState({});
   const [oneMealId, setOneMealId] = useState();
@@ -29,14 +29,14 @@ function App() {
     const fetchData = async () => {
       const db = firebase.firestore();
       const data = await db.collection("meals").get();
-      setMeals(data.docs.map(doc => ({ ...doc.data(), id: doc.id })));
-      setMealIds(data.docs.map(doc => ({ id: doc.id })));
+      setMeals(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setMealIds(data.docs.map((doc) => ({ id: doc.id })));
     };
     fetchData();
   }, [meal]);
 
   useEffect(() => {
-    const mealImages = meals => {
+    const mealImages = (meals) => {
       let newImageArray = [];
       for (let mealObj of meals) {
         if (mealObj.mealData.imgUrl !== "") {
