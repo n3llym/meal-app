@@ -15,7 +15,7 @@ const ViewOneContainer = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: ${props => props.height - 1}px;
+  height: ${(props) => props.height - 1}px;
   contain: content;
   justify-content: flex-start;
   @media (min-width: 1025px) {
@@ -57,16 +57,16 @@ const PlateContainer = styled.div`
 `;
 
 const ImageContainer = styled.div`
-  height: ${props => props.width * 0.6}px;
-  width: ${props => props.width * 0.6}px;
+  height: ${(props) => props.width * 0.6}px;
+  width: ${(props) => props.width * 0.6}px;
   max-width: 300px;
   max-height: 300px;
   border-radius: 50%;
   position: absolute;
   margin: auto;
   img {
-    height: ${props => props.width * 0.6}px;
-    width: ${props => props.width * 0.6}px;
+    height: ${(props) => props.width * 0.6}px;
+    width: ${(props) => props.width * 0.6}px;
     max-width: 300px;
     max-height: 300px;
     border-radius: 50%;
@@ -105,7 +105,7 @@ const EditContainer = styled.div`
 `;
 
 const ViewNotesIconContainer = styled.div`
-  display: ${props => props.viewNotes && "none"};
+  display: ${(props) => props.viewNotes && "none"};
   position: fixed;
   font-size: 25px;
   bottom: 15px;
@@ -113,7 +113,7 @@ const ViewNotesIconContainer = styled.div`
 `;
 
 const StyledNotes = styled.div`
-  height: ${props => `calc(${props.height}px - 75px)`};
+  height: ${(props) => `calc(${props.height}px - 75px)`};
   position: absolute;
   bottom: 0;
   background-color: white;
@@ -122,7 +122,7 @@ const StyledNotes = styled.div`
   flex-direction: column;
   align-items: center;
   overflow-y: scroll;
-  display: ${props => !props.viewNotes && "none"};
+  display: ${(props) => !props.viewNotes && "none"};
   &::-webkit-scrollbar {
     display: none;
   }
@@ -150,7 +150,7 @@ const ViewOne = ({ setMode, meal, setMeal, previousMode }) => {
             icon={faChevronLeft}
             onClick={() => {
               setMeal("");
-              setMode(previousMode);
+              setMode(previousMode ? previousMode : "home");
             }}
           />
         </BackIconContainer>
@@ -203,7 +203,7 @@ const ViewOne = ({ setMode, meal, setMeal, previousMode }) => {
 ViewOne.propTypes = {
   setMode: PropTypes.func,
   meal: PropTypes.object,
-  oneMealId: PropTypes.string
+  oneMealId: PropTypes.string,
 };
 
 export default ViewOne;
