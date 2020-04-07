@@ -383,11 +383,8 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
 
   const handleRotation = (e) => {
     const value = e.target.value;
-    console.log("value", value);
     setRotation(value);
   };
-
-  console.log("rotation", rotation);
 
   const imagePreview = () => {
     if (imageAsFile) {

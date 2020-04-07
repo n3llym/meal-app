@@ -13,7 +13,7 @@ const HomeContainer = styled.div`
   background: white;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  // justify-content: space-between;
   align-items: center;
   width: 100%;
   height: ${(props) => props.height - 1}px;
@@ -24,13 +24,78 @@ const HomeContainer = styled.div`
   }
 `;
 
+const SelectionContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 32px 0 5px 0;
+  padding-left: 10px;
+  height: 38px;
+  padding-bottom: 15px;
+  .lds-ellipsis {
+    display: ${(props) => (props.selector ? "flex" : "none")};
+    align-self: center;
+    position: relative;
+    width: 80px;
+    height: 80px;
+    padding-left: 8px;
+  }
+  .lds-ellipsis div {
+    position: absolute;
+    top: 33px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    border: 1px solid gray;
+    animation-timing-function: cubic-bezier(0, 1, 1, 0);
+  }
+  .lds-ellipsis div:nth-child(1) {
+    left: 8px;
+    animation: lds-ellipsis1 0.6s infinite;
+  }
+  .lds-ellipsis div:nth-child(2) {
+    left: 8px;
+    animation: lds-ellipsis2 0.6s infinite;
+  }
+  .lds-ellipsis div:nth-child(3) {
+    left: 32px;
+    animation: lds-ellipsis2 0.6s infinite;
+  }
+  .lds-ellipsis div:nth-child(4) {
+    left: 56px;
+    animation: lds-ellipsis3 0.6s infinite;
+  }
+  @keyframes lds-ellipsis1 {
+    0% {
+      transform: scale(0);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  @keyframes lds-ellipsis3 {
+    0% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(0);
+    }
+  }
+  @keyframes lds-ellipsis2 {
+    0% {
+      transform: translate(0, 0);
+    }
+    100% {
+      transform: translate(24px, 0);
+    }
+  }
+`;
+
 const PlateContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
   justify-content: center;
-  margin-top: 85px;
   img {
     width: ${(props) => (props.pressFeedback === false ? 90 : 88)}vw;
     height: auto;
@@ -67,10 +132,7 @@ const AddIconContainer = styled.div`
   font-size: 25px;
   color: gray;
   cursor: pointer;
-  margin-bottom: 100px;
-  @media (min-width: 1025px) {
-    margin-bottom: 50px;
-  }
+  margin-top: 50px;
 `;
 
 const AdminIconContainer = styled.div`
@@ -161,6 +223,14 @@ const Home = ({
 
   return (
     <HomeContainer height={height}>
+      <SelectionContainer selector={selector}>
+        <div class="lds-ellipsis">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </SelectionContainer>
       <PlateContainer pressFeedback={pressFeedback}>
         <img src={plateImg} alt="plate" />
         <ImageContainer
