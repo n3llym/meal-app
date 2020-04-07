@@ -17,7 +17,7 @@ const acceptedFileTypes =
   "image/x-png, image/png, image/jpg, image/jpeg, image/gif";
 
 const OuterContainer = styled.div`
-  height: ${props => props.windowHeight - 1}px;
+  height: ${(props) => props.windowHeight - 1}px;
   width: 100vw;
   overflow: scroll;
   display: flex;
@@ -190,16 +190,16 @@ const AvatarAndUploaderContainer = styled.div`
   position: absolute;
   canvas {
     border-radius: 50%;
-    height: ${props => props.width * 0.6}px;
-    width: ${props => props.width * 0.6}px;
+    height: ${(props) => props.width * 0.6}px;
+    width: ${(props) => props.width * 0.6}px;
     max-width: 300px;
     max-height: 300px;
   }
 `;
 
 const AvatarEditorContainer = styled.div`
-  height: ${props => props.width * 0.6}px;
-  width: ${props => props.width * 0.6}px;
+  height: ${(props) => props.width * 0.6}px;
+  width: ${(props) => props.width * 0.6}px;
   max-width: 300px;
   max-height: 300px;
   contain: content;
@@ -213,8 +213,8 @@ const FileUploaderButton = styled.label`
   cursor: pointer;
   font-size: 40px;
   z-index: 2;
-  visibility: ${props => props.imageAsFile && "hidden"};
-  color: ${props => (props.imageUrl ? "white" : "gray")};
+  visibility: ${(props) => props.imageAsFile && "hidden"};
+  color: ${(props) => (props.imageUrl ? "white" : "gray")};
 `;
 
 const HiddenFileInput = styled.input`
@@ -261,10 +261,11 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
       : "",
     notes: checkValid(meal, "notes") ? meal.mealData.notes : "",
     link: checkValid(meal, "link") ? meal.mealData.link : "",
-    imgUrl: checkValid(meal, "imgUrl") ? meal.mealData.imgUrl : ""
+    imgUrl: checkValid(meal, "imgUrl") ? meal.mealData.imgUrl : "",
   });
   const [scale, setScale] = useState(1);
   const [rotation, setRotation] = useState(0);
+  const [initialRotation, setInitialRotation] = useState(0);
 
   const { height, width } = useWindowDimensions();
   const editor = useRef();
@@ -280,20 +281,18 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
     }
   }
 
-  console.log("mealData", mealData);
-
   async function onSave() {
     let promise = new Promise((resolve, reject) => {
       if (editor && imageAsFile !== "") {
         const canvas = editor.current.getImageScaledToCanvas();
-        canvas.toBlob(e => {
+        canvas.toBlob((e) => {
           const uploadTask = storage.ref(`/images/${imageAsFile.name}`).put(e);
           uploadTask.on(
             "state_changed",
-            snapShot => {
+            (snapShot) => {
               console.log(snapShot);
             },
-            err => {
+            (err) => {
               reject(console.log(err));
             },
             () => {
@@ -301,7 +300,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
                 .ref("images")
                 .child(imageAsFile.name)
                 .getDownloadURL()
-                .then(fireBaseUrl => {
+                .then((fireBaseUrl) => {
                   resolve(fireBaseUrl);
                 });
             }
@@ -326,10 +325,10 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
       let httpsRef = storage.refFromURL(checkValid(meal, "imgUrl"));
       httpsRef
         .delete()
-        .then(function() {
+        .then(function () {
           console.log("file deleted");
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log("error deleting file");
         });
     }
@@ -337,35 +336,37 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
 
   const onDelete = () => {
     const db = firebase.firestore();
-    db.collection("meals")
-      .doc(oneMealId)
-      .delete();
+    db.collection("meals").doc(oneMealId).delete();
     handleFireBaseImageDelete();
     setMode("home");
   };
 
   const handleChange = (field, value) => {
-    setMealData(mealData => ({
+    setMealData((mealData) => ({
       ...mealData,
-      [field]: value
+      [field]: value,
     }));
   };
 
-  const handleImageAsFile = e => {
+  const handleImageAsFile = (e) => {
     const imageAsFile = e.target.files[0];
-    EXIF.getData(imageAsFile, function() {
+    EXIF.getData(imageAsFile, function () {
       let orientation = EXIF.getTag(this, "Orientation");
       switch (orientation) {
         case 8:
+          setInitialRotation(270);
           setRotation(270);
           break;
         case 6:
+          setInitialRotation(90);
           setRotation(90);
           break;
         case 3:
+          setInitialRotation(180);
           setRotation(180);
           break;
         default:
+          setInitialRotation(0);
           setRotation(0);
       }
     });
@@ -375,15 +376,18 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
     setImageAsFile(imageAsFile);
   };
 
-  const handleScale = e => {
+  const handleScale = (e) => {
     const scale = parseFloat(e.target.value);
     setScale(scale);
   };
 
-  const handleRotation = e => {
-    const rotation = e.target.value;
-    setRotation(rotation);
+  const handleRotation = (e) => {
+    const value = e.target.value;
+    console.log("value", value);
+    setRotation(value);
   };
+
+  console.log("rotation", rotation);
 
   const imagePreview = () => {
     if (imageAsFile) {
@@ -425,7 +429,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
               id="title"
               name="title"
               rows="2"
-              onChange={event => handleChange("title", event.target.value)}
+              onChange={(event) => handleChange("title", event.target.value)}
               defaultValue={mealData.title === "" ? "" : mealData.title}
               placeholder={"Meal"}
               autoComplete="off"
@@ -489,10 +493,10 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
                   id="rotation"
                   type="range"
                   onChange={handleRotation}
-                  min="1"
-                  max="360"
+                  min={initialRotation}
+                  max={initialRotation + 360}
                   step="10"
-                  defaultValue="0"
+                  defaultValue={initialRotation}
                   disabled={imageAsFile ? false : true}
                 />
               </LabelAndInputContainer>
@@ -504,7 +508,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
                 type="text"
                 id="description"
                 name="description"
-                onChange={event =>
+                onChange={(event) =>
                   handleChange("description", event.target.value)
                 }
                 defaultValue={
@@ -517,7 +521,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
                 type="text"
                 id="notes"
                 name="notes"
-                onChange={event => handleChange("notes", event.target.value)}
+                onChange={(event) => handleChange("notes", event.target.value)}
                 defaultValue={mealData.notes === "" ? "" : mealData.notes}
                 placeholder="Notes"
               />
@@ -526,7 +530,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
                 id="link"
                 name="link"
                 className="link"
-                onChange={event => handleChange("link", event.target.value)}
+                onChange={(event) => handleChange("link", event.target.value)}
                 defaultValue={
                   mealData.link && mealData.link === "" ? "" : mealData.link
                 }
@@ -552,7 +556,7 @@ AddEdit.propTypes = {
   meal: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   setMeal: PropTypes.func,
   oneMealId: PropTypes.string,
-  mode: PropTypes.string
+  mode: PropTypes.string,
 };
 
 export default AddEdit;
