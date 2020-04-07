@@ -22,8 +22,9 @@ const AdminContainer = styled.div`
 
 const ListContainer = styled.div`
   height: auto;
-  margin: 32px 0 15px 0;
   overflow: scroll;
+  width: 100%;
+  text-align: center;
   &::-webkit-scrollbar {
     display: none;
   }
@@ -43,12 +44,13 @@ const BackIconContainer = styled.div`
   top: 5px;
 `;
 
-const Admin = ({ setMode, meals, setMeal, setPreviousMode }) => {
+const Admin = ({ setMode, meals, setMeal, setOneMealId, setPreviousMode }) => {
   const { height } = useWindowDimensions();
   const handleClick = (id) => {
     setPreviousMode("admin");
     let oneMeal = meals.filter((x) => x.id === id);
     setMeal(oneMeal[0]);
+    setOneMealId(id);
     setMode("view");
   };
 
