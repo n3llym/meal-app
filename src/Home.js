@@ -8,12 +8,12 @@ import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import plateImg from "./images/plateImg.png";
 import white from "./images/white.png";
 import useWindowDimensions from "./helpers/useWindowDimensions";
+import ReactLoading from "react-loading";
 
 const HomeContainer = styled.div`
   background: white;
   display: flex;
   flex-direction: column;
-  // justify-content: space-between;
   align-items: center;
   width: 100%;
   height: ${(props) => props.height - 1}px;
@@ -27,66 +27,17 @@ const HomeContainer = styled.div`
 const SelectionContainer = styled.div`
   display: flex;
   align-items: center;
-  margin: 32px 0 5px 0;
-  padding-left: 10px;
+  font-size: 2rem;
+  width: 90%;
+  margin: 32px 0 0 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   height: 38px;
   padding-bottom: 15px;
-  .lds-ellipsis {
-    display: ${(props) => (props.selector ? "flex" : "none")};
-    align-self: center;
-    position: relative;
-    width: 80px;
-    height: 80px;
-    padding-left: 8px;
-  }
-  .lds-ellipsis div {
-    position: absolute;
-    top: 33px;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    border: 1px solid gray;
-    animation-timing-function: cubic-bezier(0, 1, 1, 0);
-  }
-  .lds-ellipsis div:nth-child(1) {
-    left: 8px;
-    animation: lds-ellipsis1 0.6s infinite;
-  }
-  .lds-ellipsis div:nth-child(2) {
-    left: 8px;
-    animation: lds-ellipsis2 0.6s infinite;
-  }
-  .lds-ellipsis div:nth-child(3) {
-    left: 32px;
-    animation: lds-ellipsis2 0.6s infinite;
-  }
-  .lds-ellipsis div:nth-child(4) {
-    left: 56px;
-    animation: lds-ellipsis3 0.6s infinite;
-  }
-  @keyframes lds-ellipsis1 {
-    0% {
-      transform: scale(0);
-    }
-    100% {
-      transform: scale(1);
-    }
-  }
-  @keyframes lds-ellipsis3 {
-    0% {
-      transform: scale(1);
-    }
-    100% {
-      transform: scale(0);
-    }
-  }
-  @keyframes lds-ellipsis2 {
-    0% {
-      transform: translate(0, 0);
-    }
-    100% {
-      transform: translate(24px, 0);
-    }
+  .loader {
+    display: ${(props) => !props.selector && "none"};
   }
 `;
 
@@ -96,6 +47,7 @@ const PlateContainer = styled.div`
   align-items: center;
   position: relative;
   justify-content: center;
+  height: auto;
   img {
     width: ${(props) => (props.pressFeedback === false ? 90 : 88)}vw;
     height: auto;
@@ -224,12 +176,7 @@ const Home = ({
   return (
     <HomeContainer height={height}>
       <SelectionContainer selector={selector}>
-        <div class="lds-ellipsis">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
+        <ReactLoading type={"bubbles"} color={"gray"} className={"loader"} />
       </SelectionContainer>
       <PlateContainer pressFeedback={pressFeedback}>
         <img src={plateImg} alt="plate" />
