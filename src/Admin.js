@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./theme.js";
 import styled from "styled-components";
 import PropTypes from "prop-types";
@@ -53,10 +53,6 @@ const Admin = ({ setMode, meals, setMeal, setOneMealId, setPreviousMode }) => {
     setOneMealId(id);
     setMode("view");
   };
-
-  useEffect(() => {
-    meals.sort((a, b) => (a.mealData.title > b.mealData.title ? 1 : -1));
-  }, [meals]);
 
   return (
     <AdminContainer height={height}>

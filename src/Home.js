@@ -84,7 +84,10 @@ const AddIconContainer = styled.div`
   font-size: 25px;
   color: gray;
   cursor: pointer;
-  margin-top: 50px;
+  margin-top: ${(props) => (props.pressFeedback === false ? 50 : 58)}px;
+  @media (min-width: 1025px) {
+    margin-top: 50px;
+  }
 `;
 
 const AdminIconContainer = styled.div`
@@ -194,7 +197,7 @@ const Home = ({
           />
         </ImageContainer>
       </PlateContainer>
-      <AddIconContainer>
+      <AddIconContainer pressFeedback={pressFeedback}>
         <FontAwesomeIcon onClick={() => setMode("add")} icon={faPlus} />
       </AddIconContainer>
       <AdminIconContainer>

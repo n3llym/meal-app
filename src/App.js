@@ -24,6 +24,7 @@ function App() {
   const [mealIds, setMealIds] = useState([]);
   const [imagesArray, setImagesArray] = useState([]);
   const [previousMode, setPreviousMode] = useState();
+  const [orderedList, setOrderedList] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,6 +46,10 @@ function App() {
       }
       setImagesArray(newImageArray);
     };
+    const ordered = meals.sort((a, b) =>
+      a.mealData.title > b.mealData.title ? 1 : -1
+    );
+    setOrderedList(ordered);
     mealImages(meals);
   }, [meals]);
 
@@ -87,7 +92,7 @@ function App() {
           setMode={setMode}
           setMeal={setMeal}
           setOneMealId={setOneMealId}
-          meals={meals}
+          meals={orderedList}
           mealIds={mealIds}
           imagesArray={imagesArray}
           setPreviousMode={setPreviousMode}
