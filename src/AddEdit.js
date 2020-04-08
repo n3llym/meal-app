@@ -62,7 +62,7 @@ const TitleInput = styled.div`
   margin: 32px 0 5px 0;
   width: 100%;
   height: auto;
-  & input {
+  input {
     font-size: 2rem;
     height: 38px;
     color: gray;
@@ -84,11 +84,14 @@ const TitleInput = styled.div`
     }
     @media (min-width: 1025px) {
       margin: 0;
+      input {
+        margin 0;
+      }
     }
   }
 `;
 
-const DescriptionNotesInput = styled.div`
+const DescriptionNotesContainer = styled.div`
   contain: content;
   margin: 15px 0;
   font-size: 1rem;
@@ -119,7 +122,7 @@ const StyledInput = styled.input`
   -webkit-box-orient: vertical;
   overflow: scroll;
   &.link {
-    margin-top: 5px;
+    margin-top: 2px;
   }
   &::-webkit-scrollbar {
     display: none;
@@ -127,7 +130,7 @@ const StyledInput = styled.input`
   @media (min-width: 1025px) {
     margin: 0 0 15px 0;
     &.link {
-      margin-top: 15px;
+      margin-top: 13px;
     }
   }
   &:focus::placeholder {
@@ -512,7 +515,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
             </ControlsContainer>
           </>
 
-          <DescriptionNotesInput>
+          <DescriptionNotesContainer>
             <form>
               <StyledInput
                 type="text"
@@ -548,7 +551,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
                 autoComplete="off"
               />
             </form>
-          </DescriptionNotesInput>
+          </DescriptionNotesContainer>
         </InnerContainer>
         {mode === "edit" && (
           <DeleteIconContainer>

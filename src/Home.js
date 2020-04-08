@@ -29,7 +29,7 @@ const SelectionContainer = styled.div`
   align-items: center;
   font-size: 2rem;
   width: 90%;
-  margin: 32px 0 0 0;
+  margin: 34px 0 0 0;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
@@ -47,7 +47,8 @@ const PlateContainer = styled.div`
   align-items: center;
   position: relative;
   justify-content: center;
-  height: auto;
+  height: 90vw;
+  max-height: 450px;
   img {
     width: ${(props) => (props.pressFeedback === false ? 90 : 88)}vw;
     height: auto;
@@ -84,10 +85,7 @@ const AddIconContainer = styled.div`
   font-size: 25px;
   color: gray;
   cursor: pointer;
-  margin-top: ${(props) => (props.pressFeedback === false ? 50 : 58)}px;
-  @media (min-width: 1025px) {
-    margin-top: 50px;
-  }
+  margin-top: 50px;
 `;
 
 const AdminIconContainer = styled.div`
@@ -113,6 +111,7 @@ const Home = ({
   const [linearLoopTime, setLinearLoopTime] = useState(initialLoopTime);
   const [index, setIndex] = useState(0);
   const [pressFeedback, setPressFeedback] = useState(false);
+  const [stopLinearLoop, setStopLinearLoop] = useState(false);
   const { height, width } = useWindowDimensions();
 
   const handleFeedback = (e) => {
@@ -134,10 +133,13 @@ const Home = ({
       if (selector === false) {
         setSelector(true);
         const timer = setTimeout(() => {
+          setStopLinearLoop(true);
           let randomNum = Math.floor(Math.random() * mealIds.length);
           let oneMealId = mealIds[randomNum].id;
           setOneMealId(oneMealId);
           let oneMeal = meals.filter((x) => x.id === oneMealId);
+          console.log(oneMeal[0].mealData.imgUrl);
+          setImage(oneMeal[0].mealData.imgUrl);
           setMeal(oneMeal[0]);
           setPreviousMode("home");
           setMode("view");
@@ -181,20 +183,18 @@ const Home = ({
       <SelectionContainer selector={selector}>
         <ReactLoading type={"bubbles"} color={"gray"} className={"loader"} />
       </SelectionContainer>
-      <PlateContainer pressFeedback={pressFeedback}>
+      <PlateContainer
+        pressFeedback={pressFeedback}
+        onClick={(e) => randomSelector(e)}
+        onMouseDown={(e) => handleFeedback(e)}
+      >
         <img src={plateImg} alt="plate" />
         <ImageContainer
           width={width}
           selector={selector}
           pressFeedback={pressFeedback}
         >
-          <img
-            src={image ? image : white}
-            alt="food"
-            width={width}
-            onClick={(e) => randomSelector(e)}
-            onMouseDown={(e) => handleFeedback(e)}
-          />
+          <img src={image ? image : white} alt="food" width={width} />
         </ImageContainer>
       </PlateContainer>
       <AddIconContainer pressFeedback={pressFeedback}>
