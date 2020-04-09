@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
-import { faChevronUp } from "@fortawesome/free-solid-svg-icons";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons/faChevronLeft";
+import { faChevronUp } from "@fortawesome/free-solid-svg-icons/faChevronLeft";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons/faChevronDown";
 import plateImg from "./images/plateImg.png";
 import { checkValid } from "./helpers/functions.js";
 import useWindowDimensions from "./helpers/useWindowDimensions";
@@ -15,7 +15,6 @@ const ViewOneContainer = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: ${(props) => props.height - 1}px;
   contain: content;
   justify-content: flex-start;
   @media (min-width: 1025px) {
@@ -28,18 +27,22 @@ const Title = styled.div`
   display: flex;
   align-items: center;
   font-size: 2rem;
-  width: 90%;
+  width: 80%;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  margin: 32px 0 5px 0;
+  margin: 20px 0 17px 0;
   height: 38px;
   padding: 5px;
   p {
     contain: content;
     text-align: center;
     margin: 0;
+  }
+  @media (min-width: 1025px) {
+    margin: 32px 0 5px 0;
+    width: 100%;
   }
 `;
 
@@ -49,24 +52,28 @@ const PlateContainer = styled.div`
   align-items: center;
   position: relative;
   justify-content: center;
+  width: ${(props) => props.maxWidth * 0.9}px;
+  height: ${(props) => props.maxWidth * 0.9}px;
+  max-width: 450px;
+  max-height: 450px;
   img {
-    width: 90vw;
+    width: ${(props) => props.maxWidth * 0.9}px;
     height: auto;
     max-width: 450px;
   }
 `;
 
 const ImageContainer = styled.div`
-  height: ${(props) => props.width * 0.6}px;
-  width: ${(props) => props.width * 0.6}px;
+  height: ${(props) => props.maxWidth * 0.6}px;
+  width: ${(props) => props.maxWidth * 0.6}px;
   max-width: 300px;
   max-height: 300px;
   border-radius: 50%;
   position: absolute;
   margin: auto;
   img {
-    height: ${(props) => props.width * 0.6}px;
-    width: ${(props) => props.width * 0.6}px;
+    height: ${(props) => props.maxWidth * 0.6}px;
+    width: ${(props) => props.maxWidth * 0.6}px;
     max-width: 300px;
     max-height: 300px;
     border-radius: 50%;
@@ -140,7 +147,7 @@ const StyledNotes = styled.div`
 
 const ViewOne = ({ setMode, meal, setMeal, previousMode }) => {
   const [viewNotes, setViewNotes] = useState(false);
-  const { height, width } = useWindowDimensions();
+  const { height, maxWidth } = useWindowDimensions();
 
   return (
     <>
@@ -160,11 +167,15 @@ const ViewOne = ({ setMode, meal, setMeal, previousMode }) => {
         <EditContainer>
           <p onClick={() => setMode("edit")}>Edit</p>
         </EditContainer>
-        <PlateContainer>
+        <PlateContainer maxWidth={maxWidth}>
           <img src={plateImg} alt="plate" />
           {checkValid(meal, "imgUrl") && (
-            <ImageContainer width={width}>
-              <img src={checkValid(meal, "imgUrl")} alt="food" width={width} />
+            <ImageContainer maxWidth={maxWidth}>
+              <img
+                src={checkValid(meal, "imgUrl")}
+                alt="food"
+                maxWidth={maxWidth}
+              />
             </ImageContainer>
           )}
         </PlateContainer>

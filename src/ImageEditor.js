@@ -3,7 +3,7 @@ import ReactAvatarEditor from "react-avatar-editor";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faImage } from "@fortawesome/free-regular-svg-icons";
+import { faImage } from "@fortawesome/free-regular-svg-icons/faImage";
 import useWindowDimensions from "./helpers/useWindowDimensions";
 import plateImg from "./images/plateImg.png";
 import white from "./images/white.png";
@@ -34,16 +34,16 @@ const AvatarAndUploaderContainer = styled.div`
   position: absolute;
   canvas {
     border-radius: 50%;
-    height: ${props => props.width * 0.6}px;
-    width: ${props => props.width * 0.6}px;
+    height: ${(props) => props.width * 0.6}px;
+    width: ${(props) => props.width * 0.6}px;
     max-width: 300px;
     max-height: 300px;
   }
 `;
 
 const AvatarEditorContainer = styled.div`
-  height: ${props => props.width * 0.6}px;
-  width: ${props => props.width * 0.6}px;
+  height: ${(props) => props.width * 0.6}px;
+  width: ${(props) => props.width * 0.6}px;
   max-width: 300px;
   max-height: 300px;
   contain: content;
@@ -57,8 +57,8 @@ const FileUploaderButton = styled.label`
   cursor: pointer;
   font-size: 40px;
   z-index: 2;
-  visibility: ${props => props.imageAsFile && "hidden"};
-  color: ${props => (props.imageUrl ? "white" : "gray")};
+  visibility: ${(props) => props.imageAsFile && "hidden"};
+  color: ${(props) => (props.imageUrl ? "white" : "gray")};
 `;
 
 const HiddenFileInput = styled.input`
@@ -101,14 +101,14 @@ const ImageCropper = ({
   imageAsFile,
   setImageAsFile,
   imageUrl,
-  mode
+  mode,
 }) => {
   const editor = useRef();
   const { width } = useWindowDimensions();
   const [scale, setScale] = useState(1);
   const [rotation, setRotation] = useState(0);
 
-  const handleImageAsFile = e => {
+  const handleImageAsFile = (e) => {
     const imageAsFile = e.target.files[0];
     if (imageAsFile === "") {
       console.error(`not an image, the image file is a ${typeof imageAsFile}`);
@@ -116,13 +116,13 @@ const ImageCropper = ({
     setImageAsFile(imageAsFile);
   };
 
-  const handleScale = e => {
+  const handleScale = (e) => {
     const scale = parseFloat(e.target.value);
     setScale(scale);
     onClickSave();
   };
 
-  const handleRotation = e => {
+  const handleRotation = (e) => {
     const rotation = e.target.value;
     console.log(rotation);
     setRotation(rotation);
@@ -132,7 +132,7 @@ const ImageCropper = ({
   const onClickSave = () => {
     if (editor) {
       const canvas = editor.current.getImageScaledToCanvas();
-      canvas.toBlob(blob => {
+      canvas.toBlob((blob) => {
         firebaseUpload(blob);
       });
     }
@@ -224,7 +224,7 @@ ImageCropper.propTypes = {
   firebaseUpload: PropTypes.func,
   setImageAsFile: PropTypes.func,
   mode: PropTypes.string,
-  imageUrl: PropTypes.string
+  imageUrl: PropTypes.string,
 };
 
 export default ImageCropper;

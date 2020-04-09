@@ -4,11 +4,12 @@ import PropTypes from "prop-types";
 import firebase from "firebase";
 import { storage } from "./firebase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
+import { faTrashAlt } from "@fortawesome/free-regular-svg-icons/faTrashAlt";
+import { faImage } from "@fortawesome/free-regular-svg-icons/faImage";
 import { checkValid } from "./helpers/functions.js";
 import useWindowDimensions from "./helpers/useWindowDimensions";
 import ReactAvatarEditor from "react-avatar-editor";
-import { faImage } from "@fortawesome/free-regular-svg-icons";
+
 import plateImg from "./images/plateImg.png";
 import white from "./images/white.png";
 import EXIF from "exif-js";
@@ -17,7 +18,6 @@ const acceptedFileTypes =
   "image/x-png, image/png, image/jpg, image/jpeg, image/gif";
 
 const OuterContainer = styled.div`
-  height: ${(props) => props.windowHeight - 1}px;
   width: 100vw;
   display: flex;
   flex-direction: column;
@@ -45,7 +45,7 @@ const AddNewContainer = styled.div`
     display: none !important;
   }
   @media (min-width: 1025px) {
-    width: 80%;
+    width: 100%;
     max-width: 700px;
   }
 `;
@@ -55,7 +55,7 @@ const InnerContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  height: auto;
+  height: 100%;
 `;
 
 const TitleInput = styled.div`
@@ -96,14 +96,19 @@ const DescriptionNotesContainer = styled.div`
   margin: 15px 0;
   font-size: 1rem;
   width: 100vw;
+  height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   @media (min-width: 1025px) {
     width: 100%;
+    form {
+      width: 100%;
+    }
   }
   form {
     width: 100%;
+    display: contents;
   }
 `;
 
@@ -122,7 +127,7 @@ const StyledInput = styled.input`
   -webkit-box-orient: vertical;
   overflow: scroll;
   &.link {
-    margin-top: 2px;
+    margin-top: 5px;
   }
   &::-webkit-scrollbar {
     display: none;
@@ -130,7 +135,7 @@ const StyledInput = styled.input`
   @media (min-width: 1025px) {
     margin: 0 0 15px 0;
     &.link {
-      margin-top: 13px;
+      margin-top: 15px;
     }
   }
   &:focus::placeholder {
@@ -188,8 +193,12 @@ const PlateContainer = styled.div`
   align-items: center;
   position: relative;
   justify-content: center;
+  height: ${(props) => props.maxWidth * 0.9}px;
+  width: ${(props) => props.maxWidth * 0.9}px;
+  max-width: 450px;
+  max-height: 450px;
   .plate {
-    width: 90vw;
+    width: ${(props) => props.maxWidth * 0.9}px;
     height: auto;
     max-width: 450px;
     position: relative;
@@ -205,16 +214,16 @@ const AvatarAndUploaderContainer = styled.div`
   position: absolute;
   canvas {
     border-radius: 50%;
-    height: ${(props) => props.width * 0.6}px;
-    width: ${(props) => props.width * 0.6}px;
+    height: ${(props) => props.maxWidth * 0.6}px;
+    width: ${(props) => props.maxWidth * 0.6}px;
     max-width: 300px;
     max-height: 300px;
   }
 `;
 
 const AvatarEditorContainer = styled.div`
-  height: ${(props) => props.width * 0.6}px;
-  width: ${(props) => props.width * 0.6}px;
+  height: ${(props) => props.maxWidth * 0.6}px;
+  width: ${(props) => props.maxWidth * 0.6}px;
   max-width: 300px;
   max-height: 300px;
   contain: content;
@@ -267,7 +276,7 @@ const LabelAndInputContainer = styled.div`
   }
 `;
 
-const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
+const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
   const [imageAsFile, setImageAsFile] = useState("");
   const [mealData, setMealData] = useState({
     title: checkValid(meal, "title") ? meal.mealData.title : "",
@@ -282,7 +291,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
   const [rotation, setRotation] = useState(0);
   const [initialRotation, setInitialRotation] = useState(0);
 
-  const { height, width } = useWindowDimensions();
+  const { height, width, maxWidth } = useWindowDimensions();
   const editor = useRef();
 
   function addOrEditConditional(value) {
@@ -448,9 +457,9 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
             />
           </TitleInput>
           <>
-            <PlateContainer>
+            <PlateContainer maxWidth={maxWidth}>
               <img src={plateImg} alt="plate" className="plate" />
-              <AvatarAndUploaderContainer width={width}>
+              <AvatarAndUploaderContainer maxWidth={maxWidth}>
                 <FileUploaderButton
                   htmlFor="image"
                   className="imageUploader"
@@ -468,12 +477,12 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
                   accept={acceptedFileTypes}
                   multiple={false}
                 />
-                <AvatarEditorContainer width={width}>
+                <AvatarEditorContainer maxWidth={maxWidth}>
                   <ReactAvatarEditor
                     ref={editor}
                     image={imagePreview()}
-                    width={width * 0.6}
-                    height={width * 0.6}
+                    width={maxWidth * 0.6}
+                    height={maxWidth * 0.6}
                     scale={parseFloat(scale)}
                     border={0}
                     borderRadius={150}

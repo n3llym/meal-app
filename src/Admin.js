@@ -3,7 +3,7 @@ import "./theme.js";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons/faChevronDown";
 import useWindowDimensions from "./helpers/useWindowDimensions";
 
 const AdminContainer = styled.div`

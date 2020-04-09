@@ -3,9 +3,8 @@ import "./theme.js";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import { faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
+import { faChevronUp } from "@fortawesome/free-solid-svg-icons/faChevronUp";
 import plateImg from "./images/plateImg.png";
 import white from "./images/white.png";
 import useWindowDimensions from "./helpers/useWindowDimensions";
@@ -48,10 +47,11 @@ const PlateContainer = styled.div`
   align-items: center;
   position: relative;
   justify-content: center;
-  height: 90vw;
+  height: ${(props) => props.maxWidth * 0.9}px;
   max-height: 450px;
   img {
-    width: ${(props) => (!props.pressFeedback ? 90 : 88)}vw;
+    width: ${(props) =>
+      !props.pressFeedback ? props.maxWidth * 0.9 : props.maxWidth * 0.88}px;
     height: auto;
     max-width: 450px;
   }
@@ -59,9 +59,9 @@ const PlateContainer = styled.div`
 
 const ImageContainer = styled.div`
   height: ${(props) =>
-    !props.pressFeedback ? props.width * 0.6 : props.width * 0.58}px;
+    !props.pressFeedback ? props.maxWidth * 0.6 : props.maxWidth * 0.58}px;
   width: ${(props) =>
-    !props.pressFeedback ? props.width * 0.6 : props.width * 0.58}px;
+    !props.pressFeedback ? props.maxWidth * 0.6 : props.maxWidth * 0.58}px;
   max-width: 300px;
   max-height: 300px;
   border-radius: 50%;
@@ -70,9 +70,9 @@ const ImageContainer = styled.div`
   cursor: ${(props) => (props.selector ? "wait" : "pointer")};
   img {
     height: ${(props) =>
-      !props.pressFeedback ? props.width * 0.6 : props.width * 0.58}px;
+      !props.pressFeedback ? props.maxWidth * 0.6 : props.maxWidth * 0.58}px;
     width: ${(props) =>
-      !props.pressFeedback ? props.width * 0.6 : props.width * 0.58}px;
+      !props.pressFeedback ? props.maxWidth * 0.6 : props.maxWidth * 0.58}px;
     max-width: 300px;
     max-height: 300px;
     border-radius: 50%;
@@ -110,7 +110,7 @@ const Home = ({
   const [loopTime, setLoopTime] = useState(200);
   const [changingImage, setChangingImage] = useState(true);
   const [pressFeedback, setPressFeedback] = useState(false);
-  const { height, width } = useWindowDimensions();
+  const { height, maxWidth } = useWindowDimensions();
 
   const randomSelector = (e) => {
     e.preventDefault();
@@ -175,14 +175,15 @@ const Home = ({
         pressFeedback={pressFeedback}
         onClick={(e) => randomSelector(e)}
         onMouseDown={(e) => handleFeedback(e)}
+        maxWidth={maxWidth}
       >
         <img src={plateImg} alt="plate" />
         <ImageContainer
-          width={width}
+          maxWidth={maxWidth}
           selector={selector}
           pressFeedback={pressFeedback}
         >
-          <img src={image ? image : white} alt="food" width={width} />
+          <img src={image ? image : white} alt="food" />
         </ImageContainer>
       </PlateContainer>
       <AddIconContainer pressFeedback={pressFeedback}>
