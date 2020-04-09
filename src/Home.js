@@ -107,7 +107,6 @@ const Home = ({
 }) => {
   const [image, setImage] = useState("");
   const [selector, setSelector] = useState(false);
-  const [loopTime, setLoopTime] = useState(200);
   const [changingImage, setChangingImage] = useState(true);
   const [pressFeedback, setPressFeedback] = useState(false);
   const { height, maxWidth } = useWindowDimensions();
@@ -118,7 +117,6 @@ const Home = ({
       alert("Please add a meal to get started");
     } else if (selector === false) {
       setSelector(true);
-      setLoopTime(100);
       let randomNum = Math.floor(Math.random() * mealIds.length);
       let oneMealId = mealIds[randomNum].id;
       let oneMeal = meals.filter((x) => x.id === oneMealId);
@@ -163,7 +161,7 @@ const Home = ({
       }
       return () => clearInterval(interval);
     }
-  }, [imagesArray, selector, loopTime, changingImage]);
+  }, [imagesArray, selector, changingImage]);
 
   return (
     <HomeContainer height={height}>
