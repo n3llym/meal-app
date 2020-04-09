@@ -430,7 +430,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
           {mode === "edit" && (
             <>
               <SaveButton onClick={onSave}>Update</SaveButton>
-              <CancelButton onClick={() => setMode(previousMode)}>
+              <CancelButton onClick={() => setMode("view")}>
                 Cancel
               </CancelButton>
             </>

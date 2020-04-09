@@ -23,7 +23,7 @@ function App() {
   const [oneMealId, setOneMealId] = useState();
   const [mealIds, setMealIds] = useState([]);
   const [imagesArray, setImagesArray] = useState([]);
-  const [previousMode, setPreviousMode] = useState();
+  const [previousMode, setPreviousMode] = useState("home");
   const [orderedList, setOrderedList] = useState();
 
   useEffect(() => {
@@ -41,6 +41,7 @@ function App() {
       let newImageArray = [];
       for (let mealObj of meals) {
         if (mealObj.mealData.imgUrl !== "") {
+          console.log(mealObj.mealData.imgUrl);
           newImageArray.push(mealObj.mealData.imgUrl);
         }
       }
