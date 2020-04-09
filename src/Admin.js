@@ -3,7 +3,7 @@ import "./theme.js";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import useWindowDimensions from "./helpers/useWindowDimensions";
 
 const AdminContainer = styled.div`
@@ -21,10 +21,11 @@ const AdminContainer = styled.div`
 `;
 
 const ListContainer = styled.div`
-  height: auto;
+  height: ${(props) => props.height - 65}px;
   overflow: scroll;
   width: 100%;
   text-align: center;
+  padding: 5px 0;
   &::-webkit-scrollbar {
     display: none;
   }
@@ -36,12 +37,11 @@ const ListItem = styled.p`
 `;
 
 const BackIconContainer = styled.div`
-  font-size: 40px;
-  color: gray;
-  cursor: pointer;
   position: fixed;
-  left: 5px;
-  top: 5px;
+  font-size: 25px;
+  bottom: 15px;
+  color: gray;
+  margin-top: 10px;
 `;
 
 const Admin = ({ setMode, meals, setMeal, setOneMealId, setPreviousMode }) => {
@@ -56,22 +56,24 @@ const Admin = ({ setMode, meals, setMeal, setOneMealId, setPreviousMode }) => {
 
   return (
     <AdminContainer height={height}>
+      {meals && (
+        <ListContainer height={height}>
+          {meals.map((meal) => (
+            <ListItem key={meal.id} onClick={() => handleClick(meal.id)}>
+              {meal.mealData.title}
+            </ListItem>
+          ))}
+        </ListContainer>
+      )}
       <BackIconContainer>
         <FontAwesomeIcon
-          icon={faChevronLeft}
+          icon={faChevronDown}
           onClick={() => {
             setMeal("");
             setMode("home");
           }}
         />
       </BackIconContainer>
-      <ListContainer>
-        {meals.map((meal) => (
-          <ListItem key={meal.id} onClick={() => handleClick(meal.id)}>
-            {meal.mealData.title}
-          </ListItem>
-        ))}
-      </ListContainer>
     </AdminContainer>
   );
 };

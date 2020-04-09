@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import plateImg from "./images/plateImg.png";
 import white from "./images/white.png";
 import useWindowDimensions from "./helpers/useWindowDimensions";
@@ -188,10 +189,7 @@ const Home = ({
         <FontAwesomeIcon onClick={() => setMode("add")} icon={faPlus} />
       </AddIconContainer>
       <AdminIconContainer>
-        <FontAwesomeIcon
-          onClick={() => setMode("admin")}
-          icon={faChevronDown}
-        />
+        <FontAwesomeIcon onClick={() => setMode("admin")} icon={faChevronUp} />
       </AdminIconContainer>
     </HomeContainer>
   );
