@@ -41,7 +41,6 @@ function App() {
       let newImageArray = [];
       for (let mealObj of meals) {
         if (mealObj.mealData.imgUrl !== "") {
-          console.log(mealObj.mealData.imgUrl);
           newImageArray.push(mealObj.mealData.imgUrl);
         }
       }
