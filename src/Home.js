@@ -50,7 +50,7 @@ const PlateContainer = styled.div`
   height: 90vw;
   max-height: 450px;
   img {
-    width: ${(props) => (!props.selector ? 90 : 88)}vw;
+    width: ${(props) => (!props.pressFeedback ? 90 : 88)}vw;
     height: auto;
     max-width: 450px;
   }
@@ -58,9 +58,9 @@ const PlateContainer = styled.div`
 
 const ImageContainer = styled.div`
   height: ${(props) =>
-    !props.selector ? props.width * 0.6 : props.width * 0.58}px;
+    !props.pressFeedback ? props.width * 0.6 : props.width * 0.58}px;
   width: ${(props) =>
-    !props.selector ? props.width * 0.6 : props.width * 0.58}px;
+    !props.pressFeedback ? props.width * 0.6 : props.width * 0.58}px;
   max-width: 300px;
   max-height: 300px;
   border-radius: 50%;
@@ -69,9 +69,9 @@ const ImageContainer = styled.div`
   cursor: ${(props) => (props.selector ? "wait" : "pointer")};
   img {
     height: ${(props) =>
-      !props.selector ? props.width * 0.6 : props.width * 0.58}px;
+      !props.pressFeedback ? props.width * 0.6 : props.width * 0.58}px;
     width: ${(props) =>
-      !props.selector ? props.width * 0.6 : props.width * 0.58}px;
+      !props.pressFeedback ? props.width * 0.6 : props.width * 0.58}px;
     max-width: 300px;
     max-height: 300px;
     border-radius: 50%;
@@ -108,6 +108,7 @@ const Home = ({
   const [selector, setSelector] = useState(false);
   const [loopTime, setLoopTime] = useState(200);
   const [changingImage, setChangingImage] = useState(true);
+  const [pressFeedback, setPressFeedback] = useState(false);
   const { height, width } = useWindowDimensions();
 
   const randomSelector = (e) => {
@@ -138,6 +139,17 @@ const Home = ({
     }
   };
 
+  const handleFeedback = (e) => {
+    e.preventDefault();
+    if (selector === false) {
+      setPressFeedback(true);
+      let feedbackTimer = setTimeout(() => {
+        setPressFeedback(false);
+      }, 500);
+      return () => clearTimeout(feedbackTimer);
+    }
+  };
+
   useEffect(() => {
     if (imagesArray.length > 0) {
       let index = 0;
@@ -157,13 +169,22 @@ const Home = ({
       <SelectionContainer selector={selector}>
         <ReactLoading type={"bubbles"} color={"gray"} className={"loader"} />
       </SelectionContainer>
-      <PlateContainer selector={selector} onClick={(e) => randomSelector(e)}>
+      <PlateContainer
+        selector={selector}
+        pressFeedback={pressFeedback}
+        onClick={(e) => randomSelector(e)}
+        onMouseDown={(e) => handleFeedback(e)}
+      >
         <img src={plateImg} alt="plate" />
-        <ImageContainer width={width} selector={selector}>
+        <ImageContainer
+          width={width}
+          selector={selector}
+          pressFeedback={pressFeedback}
+        >
           <img src={image ? image : white} alt="food" width={width} />
         </ImageContainer>
       </PlateContainer>
-      <AddIconContainer selector={selector}>
+      <AddIconContainer pressFeedback={pressFeedback}>
         <FontAwesomeIcon onClick={() => setMode("add")} icon={faPlus} />
       </AddIconContainer>
       <AdminIconContainer>
