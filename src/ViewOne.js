@@ -3,13 +3,14 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons/faChevronLeft";
-import { faChevronUp } from "@fortawesome/free-solid-svg-icons/faChevronLeft";
+import { faChevronUp } from "@fortawesome/free-solid-svg-icons/faChevronUp";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons/faChevronDown";
 import plateImg from "./images/plateImg.png";
 import { checkValid } from "./helpers/functions.js";
 import useWindowDimensions from "./helpers/useWindowDimensions";
 
 const ViewOneContainer = styled.div`
+  min-height: ${(props) => props.height}px;
   background: white;
   display: flex;
   flex-direction: column;
@@ -150,64 +151,54 @@ const ViewOne = ({ setMode, meal, setMeal, previousMode }) => {
   const { height, maxWidth } = useWindowDimensions();
 
   return (
-    <>
-      <ViewOneContainer height={height}>
-        <BackIconContainer>
-          <FontAwesomeIcon
-            icon={faChevronLeft}
-            onClick={() => {
-              setMeal("");
-              setMode(previousMode ? previousMode : "home");
-            }}
-          />
-        </BackIconContainer>
-        <Title>
-          <p>{checkValid(meal, "title")}</p>
-        </Title>
-        <EditContainer>
-          <p onClick={() => setMode("edit")}>Edit</p>
-        </EditContainer>
-        <PlateContainer maxWidth={maxWidth}>
-          <img src={plateImg} alt="plate" />
-          {checkValid(meal, "imgUrl") && (
-            <ImageContainer maxWidth={maxWidth}>
-              <img
-                src={checkValid(meal, "imgUrl")}
-                alt="food"
-                maxWidth={maxWidth}
-              />
-            </ImageContainer>
-          )}
-        </PlateContainer>
-        <DescriptionContainer>
-          <p>{checkValid(meal, "description")}</p>
-        </DescriptionContainer>
-        {(checkValid(meal, "notes") || checkValid(meal, "link")) && (
-          <ViewNotesIconContainer
-            onClick={() => setViewNotes(!viewNotes)}
-            viewNotes={viewNotes}
-          >
-            <FontAwesomeIcon icon={faChevronUp} />
-          </ViewNotesIconContainer>
+    <ViewOneContainer height={height}>
+      <BackIconContainer>
+        <FontAwesomeIcon
+          icon={faChevronLeft}
+          onClick={() => {
+            setMeal("");
+            setMode(previousMode ? previousMode : "home");
+          }}
+        />
+      </BackIconContainer>
+      <Title>
+        <p>{checkValid(meal, "title")}</p>
+      </Title>
+      <EditContainer>
+        <p onClick={() => setMode("edit")}>Edit</p>
+      </EditContainer>
+      <PlateContainer maxWidth={maxWidth}>
+        <img src={plateImg} alt="plate" />
+        {checkValid(meal, "imgUrl") && (
+          <ImageContainer maxWidth={maxWidth}>
+            <img src={checkValid(meal, "imgUrl")} alt="food" />
+          </ImageContainer>
         )}
-        <StyledNotes viewNotes={viewNotes} height={height}>
-          <p>{checkValid(meal, "notes")}</p>
-          <a
-            href={meal.mealData.link}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {meal.mealData.link === "" ? "" : meal.mealData.link}
-          </a>
-          <ViewNotesIconContainer>
-            <FontAwesomeIcon
-              icon={faChevronDown}
-              onClick={() => setViewNotes(!viewNotes)}
-            />
-          </ViewNotesIconContainer>
-        </StyledNotes>
-      </ViewOneContainer>
-    </>
+      </PlateContainer>
+      <DescriptionContainer>
+        <p>{checkValid(meal, "description")}</p>
+      </DescriptionContainer>
+      {(checkValid(meal, "notes") || checkValid(meal, "link")) && (
+        <ViewNotesIconContainer
+          onClick={() => setViewNotes(!viewNotes)}
+          viewNotes={viewNotes}
+        >
+          <FontAwesomeIcon icon={faChevronUp} />
+        </ViewNotesIconContainer>
+      )}
+      <StyledNotes viewNotes={viewNotes} height={height}>
+        <p>{checkValid(meal, "notes")}</p>
+        <a href={meal.mealData.link} target="_blank" rel="noopener noreferrer">
+          {meal.mealData.link === "" ? "" : meal.mealData.link}
+        </a>
+        <ViewNotesIconContainer>
+          <FontAwesomeIcon
+            icon={faChevronDown}
+            onClick={() => setViewNotes(!viewNotes)}
+          />
+        </ViewNotesIconContainer>
+      </StyledNotes>
+    </ViewOneContainer>
   );
 };
 

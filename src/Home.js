@@ -16,7 +16,7 @@ const HomeContainer = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: ${(props) => props.height - 1}px;
+  min-height: ${(props) => props.height - 1}px;
   contain: content;
   @media (min-width: 1025px) {
     width: 80%;

@@ -23,6 +23,7 @@ const OuterContainer = styled.div`
   flex-direction: column;
   align-items: center;
   contain: content;
+  min-height: ${(props) => props.windowHeight};
   &::--scrollbar {
     display: none !important;
   }
@@ -291,7 +292,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
   const [rotation, setRotation] = useState(0);
   const [initialRotation, setInitialRotation] = useState(0);
 
-  const { height, width, maxWidth } = useWindowDimensions();
+  const { height, maxWidth } = useWindowDimensions();
   const editor = useRef();
 
   function addOrEditConditional(value) {
