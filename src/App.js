@@ -18,12 +18,12 @@ const OuterPageContainer = styled.div`
 
 function App() {
   const [mode, setMode] = useState("home");
+  const [previousMode, setPreviousMode] = useState("home");
   const [meals, setMeals] = useState([]);
   const [meal, setMeal] = useState({});
   const [oneMealId, setOneMealId] = useState();
   const [mealIds, setMealIds] = useState([]);
   const [imagesArray, setImagesArray] = useState([]);
-  const [previousMode, setPreviousMode] = useState("home");
   const [orderedList, setOrderedList] = useState();
 
   useEffect(() => {
@@ -40,8 +40,8 @@ function App() {
     const mealImages = (meals) => {
       let newImageArray = [];
       for (let mealObj of meals) {
-        if (mealObj.mealData.imgUrl !== "") {
-          newImageArray.push(mealObj.mealData.imgUrl);
+        if (mealObj.mealData.base64 && mealObj.mealData.base64 !== "") {
+          newImageArray.push(mealObj.mealData.base64);
         }
       }
       setImagesArray(newImageArray);
@@ -51,7 +51,7 @@ function App() {
     );
     setOrderedList(ordered);
     mealImages(meals);
-  }, [meals]);
+  }, [meal, meals]);
 
   return (
     <OuterPageContainer>
@@ -74,6 +74,7 @@ function App() {
           setMeal={setMeal}
           oneMealId={oneMealId}
           meals={meals}
+          previousMode={previousMode}
         />
       )}
       {mode === "view" && (

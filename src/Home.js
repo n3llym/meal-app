@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./theme.js";
+// import "./theme.js";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -94,6 +94,7 @@ const AdminIconContainer = styled.div`
   font-size: 25px;
   bottom: 15px;
   color: #dcdcdc;
+  cursor: pointer;
 `;
 
 const Home = ({
@@ -138,7 +139,8 @@ const Home = ({
     }
   };
 
-  const handleFeedback = (e) => {
+  //plate press visualisation
+  const platePulse = (e) => {
     e.preventDefault();
     if (selector === false) {
       setPressFeedback(true);
@@ -172,7 +174,7 @@ const Home = ({
         selector={selector}
         pressFeedback={pressFeedback}
         onClick={(e) => randomSelector(e)}
-        onMouseDown={(e) => handleFeedback(e)}
+        onMouseDown={(e) => platePulse(e)}
         maxWidth={maxWidth}
       >
         <img src={plateImg} alt="plate" />
@@ -185,10 +187,16 @@ const Home = ({
         </ImageContainer>
       </PlateContainer>
       <AddIconContainer pressFeedback={pressFeedback}>
-        <FontAwesomeIcon onClick={() => setMode("add")} icon={faPlus} />
+        <FontAwesomeIcon
+          onClick={() => !selector && setMode("add")}
+          icon={faPlus}
+        />
       </AddIconContainer>
       <AdminIconContainer>
-        <FontAwesomeIcon onClick={() => setMode("admin")} icon={faChevronUp} />
+        <FontAwesomeIcon
+          onClick={() => !selector && setMode("admin")}
+          icon={faChevronUp}
+        />
       </AdminIconContainer>
     </HomeContainer>
   );
@@ -199,6 +207,9 @@ Home.propTypes = {
   setOneMealId: PropTypes.func,
   setMeal: PropTypes.func,
   imagesArray: PropTypes.array,
+  setPreviousMode: PropTypes.func,
+  meals: PropTypes.array,
+  mealIds: PropTypes.array,
 };
 
 export default Home;

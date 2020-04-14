@@ -1,5 +1,4 @@
 import React from "react";
-import "./theme.js";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -46,7 +45,8 @@ const BackIconContainer = styled.div`
 
 const Admin = ({ setMode, meals, setMeal, setOneMealId, setPreviousMode }) => {
   const { height } = useWindowDimensions();
-  const handleClick = (id) => {
+
+  const handleMealSelection = (id) => {
     setPreviousMode("admin");
     let oneMeal = meals.filter((x) => x.id === id);
     setMeal(oneMeal[0]);
@@ -59,7 +59,10 @@ const Admin = ({ setMode, meals, setMeal, setOneMealId, setPreviousMode }) => {
       {meals && (
         <ListContainer height={height}>
           {meals.map((meal) => (
-            <ListItem key={meal.id} onClick={() => handleClick(meal.id)}>
+            <ListItem
+              key={meal.id}
+              onClick={() => handleMealSelection(meal.id)}
+            >
               {meal.mealData.title}
             </ListItem>
           ))}
@@ -71,6 +74,7 @@ const Admin = ({ setMode, meals, setMeal, setOneMealId, setPreviousMode }) => {
           onClick={() => {
             setMeal("");
             setMode("home");
+            setPreviousMode("home");
           }}
         />
       </BackIconContainer>
@@ -83,6 +87,8 @@ Admin.propTypes = {
   setOneMealId: PropTypes.func,
   setMeal: PropTypes.func,
   imagesArray: PropTypes.array,
+  meals: PropTypes.array,
+  setPreviousMode: PropTypes.func,
 };
 
 export default Admin;

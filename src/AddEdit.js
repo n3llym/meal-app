@@ -277,7 +277,7 @@ const LabelAndInputContainer = styled.div`
   }
 `;
 
-const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
+const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
   const [imageAsFile, setImageAsFile] = useState("");
   const [mealData, setMealData] = useState({
     title: checkValid(meal, "title") ? meal.mealData.title : "",
@@ -287,6 +287,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
     notes: checkValid(meal, "notes") ? meal.mealData.notes : "",
     link: checkValid(meal, "link") ? meal.mealData.link : "",
     imgUrl: checkValid(meal, "imgUrl") ? meal.mealData.imgUrl : "",
+    base64: checkValid(meal, "base64") ? meal.mealData.base64 : "",
   });
   const [scale, setScale] = useState(1);
   const [rotation, setRotation] = useState(0);
@@ -295,18 +296,23 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
   const { height, maxWidth } = useWindowDimensions();
   const editor = useRef();
 
-  function addOrEditConditional(value) {
+  function handleAddOrEditImage(urlValue, base64Value) {
     const db = firebase.firestore();
     if (mode === "edit") {
       db.collection("meals")
         .doc(oneMealId)
-        .set({ mealData: { ...mealData, imgUrl: value } });
+        .set({
+          mealData: { ...mealData, imgUrl: urlValue, base64: base64Value },
+        });
     } else {
-      db.collection("meals").add({ mealData: { ...mealData, imgUrl: value } });
+      db.collection("meals").add({
+        mealData: { ...mealData, imgUrl: urlValue, base64: base64Value },
+      });
     }
   }
 
   async function onSave() {
+    const canvas = editor.current.getImageScaledToCanvas();
     let promise = new Promise((resolve, reject) => {
       if (editor && imageAsFile !== "") {
         const canvas = editor.current.getImageScaledToCanvas();
@@ -337,10 +343,15 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
         resolve("");
       }
     });
-    let value = await promise;
+    let urlValue = await promise;
+    let base64Value = canvas.toDataURL();
     await promise
-      .then(setMeal({ mealData: { ...mealData, imgUrl: value } }))
-      .then(addOrEditConditional(value))
+      .then(
+        setMeal({
+          mealData: { ...mealData, imgUrl: urlValue, base64: base64Value },
+        })
+      )
+      .then(handleAddOrEditImage(urlValue, base64Value))
       .then(setImageAsFile(""))
       .then(setMode("view"));
   }
@@ -363,16 +374,18 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
     const db = firebase.firestore();
     db.collection("meals").doc(oneMealId).delete();
     handleFireBaseImageDelete();
-    setMode("home");
+    setMeal("");
+    setMode(previousMode);
   };
 
-  const handleChange = (field, value) => {
+  const handleTextChange = (field, value) => {
     setMealData((mealData) => ({
       ...mealData,
       [field]: value,
     }));
   };
 
+  //handling image rotation on photo upload on mobile
   const handleImageAsFile = (e) => {
     const imageAsFile = e.target.files[0];
     EXIF.getData(imageAsFile, function () {
@@ -451,7 +464,9 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
               id="title"
               name="title"
               rows="2"
-              onChange={(event) => handleChange("title", event.target.value)}
+              onChange={(event) =>
+                handleTextChange("title", event.target.value)
+              }
               defaultValue={mealData.title === "" ? "" : mealData.title}
               placeholder={"Meal"}
               autoComplete="off"
@@ -532,7 +547,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
                 id="description"
                 name="description"
                 onChange={(event) =>
-                  handleChange("description", event.target.value)
+                  handleTextChange("description", event.target.value)
                 }
                 defaultValue={
                   mealData.description === "" ? "" : mealData.description
@@ -544,7 +559,9 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
                 type="text"
                 id="notes"
                 name="notes"
-                onChange={(event) => handleChange("notes", event.target.value)}
+                onChange={(event) =>
+                  handleTextChange("notes", event.target.value)
+                }
                 defaultValue={mealData.notes === "" ? "" : mealData.notes}
                 placeholder="Notes"
               />
@@ -553,7 +570,9 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId }) => {
                 id="link"
                 name="link"
                 className="link"
-                onChange={(event) => handleChange("link", event.target.value)}
+                onChange={(event) =>
+                  handleTextChange("link", event.target.value)
+                }
                 defaultValue={
                   mealData.link && mealData.link === "" ? "" : mealData.link
                 }
@@ -580,6 +599,7 @@ AddEdit.propTypes = {
   setMeal: PropTypes.func,
   oneMealId: PropTypes.string,
   mode: PropTypes.string,
+  previousMode: PropTypes.string,
 };
 
 export default AddEdit;
