@@ -51,8 +51,7 @@ const AddNewContainer = styled.div`
     display: none !important;
   }
   @media (min-width: 1025px) {
-    width: 100%;
-    max-width: 700px;
+    contain: content;
   }
 `;
 
@@ -61,13 +60,19 @@ const InnerContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
-  height: 100%;
+  min-height: fit-content;
+  height: ${(props) => props.windowHeight}px;
+  width: 100%;
+  padding-bottom: 15px;
+  @media (min-width: 1025px) {
+    width: 100%;
+    max-width: 700px;
+  }
 `;
 
 const TitleInput = styled.div`
   width: 100%;
   height: auto;
-  
   input {
     font-size: 2rem;
     height: 38px;
@@ -282,8 +287,8 @@ const LabelAndInputContainer = styled.div`
     width: 200px;
     margin: 5px;
   }
-  label {
-    font-size: 0.5rem;
+  svg {
+    color: #dcdcdc;
   }
 `;
 
@@ -426,7 +431,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
       }
     });
     if (imageAsFile === "") {
-      console.error(`not an image, the image file is a ${typeof imageAsFile}`);
+      console.error(`Not an image, the image file is a ${typeof imageAsFile}`);
     }
     setImageAsFile(imageAsFile);
   };
@@ -458,23 +463,19 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
   return (
     <OuterContainer windowHeight={height}>
       <AddNewContainer windowHeight={height}>
-        <InnerContainer>
-          {mode === "add" && (
-            <>
-              <SaveButton onClick={onSave}>Save</SaveButton>
-              <CancelButton onClick={() => setMode("home")}>
-                Cancel
-              </CancelButton>
-            </>
-          )}
-          {mode === "edit" && (
-            <>
-              <SaveButton onClick={onSave}>Update</SaveButton>
-              <CancelButton onClick={() => setMode("view")}>
-                Cancel
-              </CancelButton>
-            </>
-          )}
+        {mode === "add" && (
+          <>
+            <SaveButton onClick={onSave}>Save</SaveButton>
+            <CancelButton onClick={() => setMode("home")}>Cancel</CancelButton>
+          </>
+        )}
+        {mode === "edit" && (
+          <>
+            <SaveButton onClick={onSave}>Update</SaveButton>
+            <CancelButton onClick={() => setMode("view")}>Cancel</CancelButton>
+          </>
+        )}
+        <InnerContainer windowHeight={height}>
           <TitleInput>
             <input
               type="text"
