@@ -5,6 +5,11 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  position: fixed;
+  overflow: hidden;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
 }
 
 code {

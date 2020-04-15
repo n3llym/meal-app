@@ -19,12 +19,13 @@ const acceptedFileTypes =
 
 const OuterContainer = styled.div`
   width: 100vw;
+  height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  contain: content;
-  min-height: ${(props) => props.windowHeight};
-  &::--scrollbar {
+  min-height: ${(props) => props.windowHeight}px;
+  overflow: scroll;
+  &::-webkit-scrollbar {
     display: none !important;
   }
   @media (min-width: 1025px) {
@@ -40,7 +41,7 @@ const AddNewContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   overflow: scroll;
   &::-webkit-scrollbar {
     display: none !important;
@@ -344,7 +345,14 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
       }
     });
     let urlValue = await promise;
-    let base64Value = canvas.toDataURL();
+    let base64Value;
+    if (editor && imageAsFile !== "") {
+      base64Value = canvas.toDataURL();
+    } else if (checkValid(meal, "base64")) {
+      base64Value = checkValid(meal, "base64");
+    } else {
+      base64Value = "";
+    }
     await promise
       .then(
         setMeal({
@@ -581,12 +589,12 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
               />
             </form>
           </DescriptionNotesContainer>
+          {mode === "edit" && (
+            <DeleteIconContainer>
+              <FontAwesomeIcon icon={faTrashAlt} onClick={() => onDelete()} />
+            </DeleteIconContainer>
+          )}
         </InnerContainer>
-        {mode === "edit" && (
-          <DeleteIconContainer>
-            <FontAwesomeIcon icon={faTrashAlt} onClick={() => onDelete()} />
-          </DeleteIconContainer>
-        )}
       </AddNewContainer>
     </OuterContainer>
   );
