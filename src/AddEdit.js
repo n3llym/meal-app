@@ -6,6 +6,10 @@ import { storage } from "./firebase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-regular-svg-icons/faTrashAlt";
 import { faImage } from "@fortawesome/free-regular-svg-icons/faImage";
+import { faSearchMinus } from "@fortawesome/free-solid-svg-icons/faSearchMinus";
+import { faSearchPlus } from "@fortawesome/free-solid-svg-icons/faSearchPlus";
+import { faRedoAlt } from "@fortawesome/free-solid-svg-icons/faRedoAlt";
+import { faUndoAlt } from "@fortawesome/free-solid-svg-icons/faUndoAlt";
 import { checkValid } from "./helpers/functions.js";
 import useWindowDimensions from "./helpers/useWindowDimensions";
 import ReactAvatarEditor from "react-avatar-editor";
@@ -56,14 +60,14 @@ const InnerContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-around;
   height: 100%;
 `;
 
 const TitleInput = styled.div`
-  margin: 32px 0 5px 0;
   width: 100%;
   height: auto;
+  
   input {
     font-size: 2rem;
     height: 38px;
@@ -95,7 +99,6 @@ const TitleInput = styled.div`
 
 const DescriptionNotesContainer = styled.div`
   contain: content;
-  margin: 15px 0;
   font-size: 1rem;
   width: 100vw;
   height: auto;
@@ -185,7 +188,6 @@ const CancelButton = styled.div`
 
 const DeleteIconContainer = styled.div`
   color: red;
-  margin-bottom: 15px;
   cursor: pointer;
 `;
 
@@ -255,17 +257,19 @@ const HiddenFileInput = styled.input`
   }
 `;
 
+const PlateAndControlsContainer = styled.div`
+  height: auto;
+  width: auto;
+  display: flex;
+  flex-direction: column;
+`;
+
 const ControlsContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: auto;
-  label {
-    font-size: 0.5rem;
-  }
-  input {
-    color: red;
-    margin: 5px;
-  }
+  width: auto;
+  align-items: center;
 `;
 
 const LabelAndInputContainer = styled.div`
@@ -273,8 +277,13 @@ const LabelAndInputContainer = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  width: 250px;
   input {
     width: 200px;
+    margin: 5px;
+  }
+  label {
+    font-size: 0.5rem;
   }
 `;
 
@@ -325,7 +334,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
               console.log(snapShot);
             },
             (err) => {
-              reject(console.log(err));
+              reject(console.error(err));
             },
             () => {
               storage
@@ -373,7 +382,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
           console.log("file deleted");
         })
         .catch(function (error) {
-          console.log("error deleting file");
+          console.error(error);
         });
     }
   };
@@ -480,7 +489,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
               autoComplete="off"
             />
           </TitleInput>
-          <>
+          <PlateAndControlsContainer>
             <PlateContainer maxWidth={maxWidth}>
               <img src={plateImg} alt="plate" className="plate" />
               <AvatarAndUploaderContainer maxWidth={maxWidth}>
@@ -518,7 +527,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
             </PlateContainer>
             <ControlsContainer>
               <LabelAndInputContainer>
-                <label htmlFor="scale">Zoom</label>
+                <FontAwesomeIcon icon={faSearchMinus} />
                 <input
                   name="scale"
                   id="scale"
@@ -530,9 +539,10 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
                   defaultValue="1"
                   disabled={imageAsFile ? false : true}
                 />
+                <FontAwesomeIcon icon={faSearchPlus} />
               </LabelAndInputContainer>
               <LabelAndInputContainer>
-                <label htmlFor="rotation">Rotate</label>
+                <FontAwesomeIcon icon={faUndoAlt} />
                 <input
                   name="rotation"
                   id="rotation"
@@ -544,10 +554,10 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
                   defaultValue={initialRotation}
                   disabled={imageAsFile ? false : true}
                 />
+                <FontAwesomeIcon icon={faRedoAlt} />
               </LabelAndInputContainer>
             </ControlsContainer>
-          </>
-
+          </PlateAndControlsContainer>
           <DescriptionNotesContainer>
             <form>
               <StyledInput

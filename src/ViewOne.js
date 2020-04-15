@@ -33,9 +33,7 @@ const Title = styled.div`
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  // margin: 20px 0 17px 0;
   height: 38px;
-  padding: 5px;
   p {
     contain: content;
     text-align: center;
