@@ -17,7 +17,7 @@ const OuterPageContainer = styled.div`
 `;
 
 function App() {
-  const [mode, setMode] = useState("home");
+  const [mode, setMode] = useState("admin");
   const [previousMode, setPreviousMode] = useState("home");
   const [meals, setMeals] = useState([]);
   const [meal, setMeal] = useState({});

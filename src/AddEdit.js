@@ -41,7 +41,7 @@ const AddNewContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 100vh;
+  height: ${(props) => props.windowHeight}px;
   overflow: scroll;
   &::-webkit-scrollbar {
     display: none !important;
@@ -449,7 +449,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
   return (
     <OuterContainer windowHeight={height}>
       <AddNewContainer windowHeight={height}>
-        <InnerContainer mode={mode}>
+        <InnerContainer>
           {mode === "add" && (
             <>
               <SaveButton onClick={onSave}>Save</SaveButton>

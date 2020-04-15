@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-// import "./theme.js";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,6 +14,7 @@ const HomeContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-around;
   width: 100%;
   min-height: ${(props) => props.height - 1}px;
   contain: content;
@@ -29,13 +29,11 @@ const SelectionContainer = styled.div`
   align-items: center;
   font-size: 2rem;
   width: 90%;
-  margin: 34px 0 0 0;
+  margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
-  overflow: hidden;
   height: 38px;
-  padding-bottom: 15px;
   .loader {
     display: ${(props) => !props.selector && "none"};
   }
@@ -47,7 +45,7 @@ const PlateContainer = styled.div`
   align-items: center;
   position: relative;
   justify-content: center;
-  height: ${(props) => props.maxWidth * 0.9}px;
+  height: ${(props) => props.height * 0.9}px;
   max-height: 450px;
   img {
     width: ${(props) =>
@@ -55,6 +53,17 @@ const PlateContainer = styled.div`
     height: auto;
     max-width: 450px;
   }
+`;
+
+const PlateAndAddContainer = styled.div`
+  height: auto;
+  display: flex;
+  height: ${(props) => props.windowHeight * 0.75}px;
+  max-height: 550px;
+  width: auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const ImageContainer = styled.div`
@@ -86,13 +95,10 @@ const AddIconContainer = styled.div`
   font-size: 25px;
   color: gray;
   cursor: pointer;
-  margin-top: 50px;
 `;
 
 const AdminIconContainer = styled.div`
-  position: fixed;
   font-size: 25px;
-  bottom: 15px;
   color: #dcdcdc;
   cursor: pointer;
 `;
@@ -170,28 +176,30 @@ const Home = ({
       <SelectionContainer selector={selector}>
         <ReactLoading type={"bubbles"} color={"gray"} className={"loader"} />
       </SelectionContainer>
-      <PlateContainer
-        selector={selector}
-        pressFeedback={pressFeedback}
-        onClick={(e) => randomSelector(e)}
-        onMouseDown={(e) => platePulse(e)}
-        maxWidth={maxWidth}
-      >
-        <img src={plateImg} alt="plate" />
-        <ImageContainer
-          maxWidth={maxWidth}
+      <PlateAndAddContainer windowHeight={height}>
+        <PlateContainer
           selector={selector}
           pressFeedback={pressFeedback}
+          onClick={(e) => randomSelector(e)}
+          onMouseDown={(e) => platePulse(e)}
+          maxWidth={maxWidth}
         >
-          <img src={image ? image : white} alt="food" />
-        </ImageContainer>
-      </PlateContainer>
-      <AddIconContainer pressFeedback={pressFeedback}>
-        <FontAwesomeIcon
-          onClick={() => !selector && setMode("add")}
-          icon={faPlus}
-        />
-      </AddIconContainer>
+          <img src={plateImg} alt="plate" />
+          <ImageContainer
+            maxWidth={maxWidth}
+            selector={selector}
+            pressFeedback={pressFeedback}
+          >
+            <img src={image ? image : white} alt="food" />
+          </ImageContainer>
+        </PlateContainer>
+        <AddIconContainer pressFeedback={pressFeedback}>
+          <FontAwesomeIcon
+            onClick={() => !selector && setMode("add")}
+            icon={faPlus}
+          />
+        </AddIconContainer>
+      </PlateAndAddContainer>
       <AdminIconContainer>
         <FontAwesomeIcon
           onClick={() => !selector && setMode("admin")}

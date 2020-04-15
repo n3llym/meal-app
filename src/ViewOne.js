@@ -15,9 +15,9 @@ const ViewOneContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-around;
   width: 100%;
   contain: content;
-  justify-content: flex-start;
   @media (min-width: 1025px) {
     width: 80%;
     max-width: 700px;
@@ -33,7 +33,7 @@ const Title = styled.div`
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  margin: 20px 0 17px 0;
+  // margin: 20px 0 17px 0;
   height: 38px;
   padding: 5px;
   p {
@@ -45,6 +45,16 @@ const Title = styled.div`
     margin: 32px 0 5px 0;
     width: 100%;
   }
+`;
+
+const PlateAndTextContainer = styled.div`
+  height: auto;
+  display: flex;
+  height: ${(props) => props.windowHeight * 0.75}px;
+  max-height: 550px;
+  width: auto;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const PlateContainer = styled.div`
@@ -113,15 +123,14 @@ const EditContainer = styled.div`
 `;
 
 const ViewNotesIconContainer = styled.div`
-  display: ${(props) => props.viewNotes && "none"};
-  position: fixed;
   font-size: 25px;
+  height: 30px;
   bottom: 15px;
   color: gray;
 `;
 
-const StyledNotes = styled.div`
-  height: ${(props) => `calc(${props.height}px - 75px)`};
+const StyledNotesContainer = styled.div`
+  height: ${(props) => `calc(${props.windowHeight}px - 75px)`};
   position: absolute;
   bottom: 0;
   background-color: white;
@@ -129,11 +138,19 @@ const StyledNotes = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-around;
   overflow-y: scroll;
   display: ${(props) => !props.viewNotes && "none"};
   &::-webkit-scrollbar {
     display: none;
   }
+`;
+
+const StyledNotes = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 90%;
   p {
     height: auto;
     margin: 15px;
@@ -167,37 +184,43 @@ const ViewOne = ({ setMode, meal, setMeal, previousMode }) => {
       <EditContainer>
         <p onClick={() => setMode("edit")}>Edit</p>
       </EditContainer>
-      <PlateContainer maxWidth={maxWidth}>
-        <img src={plateImg} alt="plate" />
-        {checkValid(meal, "imgUrl") && (
-          <ImageContainer maxWidth={maxWidth}>
-            <img src={checkValid(meal, "imgUrl")} alt="food" />
-          </ImageContainer>
-        )}
-      </PlateContainer>
-      <DescriptionContainer>
-        <p>{checkValid(meal, "description")}</p>
-      </DescriptionContainer>
-      {(checkValid(meal, "notes") || checkValid(meal, "link")) && (
-        <ViewNotesIconContainer
-          onClick={() => setViewNotes(!viewNotes)}
-          viewNotes={viewNotes}
-        >
-          <FontAwesomeIcon icon={faChevronUp} />
-        </ViewNotesIconContainer>
-      )}
-      <StyledNotes viewNotes={viewNotes} height={height}>
-        <p>{checkValid(meal, "notes")}</p>
-        <a href={meal.mealData.link} target="_blank" rel="noopener noreferrer">
-          {meal.mealData.link === "" ? "" : meal.mealData.link}
-        </a>
+      <PlateAndTextContainer windowHeight={height}>
+        <PlateContainer maxWidth={maxWidth}>
+          <img src={plateImg} alt="plate" />
+          {checkValid(meal, "imgUrl") && (
+            <ImageContainer maxWidth={maxWidth}>
+              <img src={checkValid(meal, "imgUrl")} alt="food" />
+            </ImageContainer>
+          )}
+        </PlateContainer>
+        <DescriptionContainer>
+          <p>{checkValid(meal, "description")}</p>
+        </DescriptionContainer>
+      </PlateAndTextContainer>
+      <ViewNotesIconContainer
+        onClick={() => setViewNotes(!viewNotes)}
+        viewNotes={viewNotes}
+      >
+        {checkValid(meal, "notes") && <FontAwesomeIcon icon={faChevronUp} />}
+      </ViewNotesIconContainer>
+      <StyledNotesContainer viewNotes={viewNotes} windowHeight={height}>
+        <StyledNotes>
+          <p>{checkValid(meal, "notes")}</p>
+          <a
+            href={meal.mealData.link}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {meal.mealData.link === "" ? "" : meal.mealData.link}
+          </a>
+        </StyledNotes>
         <ViewNotesIconContainer>
           <FontAwesomeIcon
             icon={faChevronDown}
             onClick={() => setViewNotes(!viewNotes)}
           />
         </ViewNotesIconContainer>
-      </StyledNotes>
+      </StyledNotesContainer>
     </ViewOneContainer>
   );
 };
