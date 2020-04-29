@@ -196,7 +196,7 @@ const DeleteIconButton = styled.button`
   border: none;
   background-color: none;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 1rem;
 `;
 
 const PlateContainer = styled.div`
@@ -244,13 +244,15 @@ const AvatarEditorContainer = styled.div`
   background: rgba(0, 0, 0, 0);
 `;
 
-const FileUploaderButton = styled.label`
+const FileUploaderButton = styled.button`
   position: absolute;
   cursor: pointer;
   font-size: 40px;
   z-index: 2;
   visibility: ${(props) => props.imageAsFile && "hidden"};
   color: ${(props) => (props.imageUrl ? "white" : "#545454")};
+  border: none;
+  background-color: rgba(255, 255, 255, 0);
 `;
 
 const HiddenFileInput = styled.input`
@@ -511,10 +513,9 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
                 >
                   <FontAwesomeIcon icon={faImage} />{" "}
                 </FileUploaderButton>
-                <label for="image-uploader" />
                 <HiddenFileInput
                   type="file"
-                  id="image-uploader"
+                  id="image"
                   name="image"
                   className="fileinput"
                   onChange={handleImageAsFile}
@@ -552,6 +553,9 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
                   defaultValue="1"
                   disabled={imageAsFile ? false : true}
                   aria-label="image scale"
+                  aria-valuemin="1"
+                  aria-valuemax="2"
+                  aria-valuenow={scale}
                 />
                 <FontAwesomeIcon icon={faSearchPlus} />
               </LabelAndInputContainer>
@@ -569,6 +573,9 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
                   defaultValue={initialRotation}
                   disabled={imageAsFile ? false : true}
                   aria-label="image rotation"
+                  aria-valuemin={initialRotation}
+                  aria-valuemax={initialRotation + 360}
+                  aria-valuenow={rotation}
                 />
                 <FontAwesomeIcon icon={faRedoAlt} />
               </LabelAndInputContainer>
