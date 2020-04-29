@@ -35,12 +35,14 @@ const ListItem = styled.p`
   cursor: pointer;
 `;
 
-const BackIconContainer = styled.div`
+const BackIconContainer = styled.button`
   position: fixed;
   font-size: 25px;
   bottom: 15px;
   color: gray;
   margin-top: 10px;
+  border: none;
+  background-color: none;
 `;
 
 const Admin = ({ setMode, meals, setMeal, setOneMealId, setPreviousMode }) => {
@@ -68,7 +70,7 @@ const Admin = ({ setMode, meals, setMeal, setOneMealId, setPreviousMode }) => {
           ))}
         </ListContainer>
       )}
-      <BackIconContainer>
+      <BackIconContainer aria-label="Back">
         <FontAwesomeIcon
           icon={faChevronDown}
           onClick={() => {

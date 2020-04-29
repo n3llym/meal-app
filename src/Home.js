@@ -9,7 +9,7 @@ import white from "./images/white.png";
 import useWindowDimensions from "./helpers/useWindowDimensions";
 import ReactLoading from "react-loading";
 
-const HomeContainer = styled.div`
+const HomeContainer = styled.main`
   background: white;
   display: flex;
   flex-direction: column;
@@ -91,16 +91,20 @@ const ImageContainer = styled.div`
   }
 `;
 
-const AddIconContainer = styled.div`
+const AddIconContainer = styled.button`
   font-size: 25px;
   color: gray;
   cursor: pointer;
+  border: none;
+  background-color: none;
 `;
 
-const AdminIconContainer = styled.div`
+const AdminIconContainer = styled.button`
   font-size: 25px;
   color: #dcdcdc;
   cursor: pointer;
+  border: none;
+  background-color: none;
 `;
 
 const Home = ({
@@ -193,14 +197,14 @@ const Home = ({
             <img src={image ? image : white} alt="food" />
           </ImageContainer>
         </PlateContainer>
-        <AddIconContainer pressFeedback={pressFeedback}>
+        <AddIconContainer aria-label="Add New" pressFeedback={pressFeedback}>
           <FontAwesomeIcon
             onClick={() => !selector && setMode("add")}
             icon={faPlus}
           />
         </AddIconContainer>
       </PlateAndAddContainer>
-      <AdminIconContainer>
+      <AdminIconContainer aria-label="View List">
         <FontAwesomeIcon
           onClick={() => !selector && setMode("admin")}
           icon={faChevronUp}

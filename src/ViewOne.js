@@ -9,7 +9,7 @@ import plateImg from "./images/plateImg.png";
 import { checkValid } from "./helpers/functions.js";
 import useWindowDimensions from "./helpers/useWindowDimensions";
 
-const ViewOneContainer = styled.div`
+const ViewOneContainer = styled.main`
   min-height: ${(props) => props.height}px;
   background: white;
   display: flex;
@@ -24,7 +24,7 @@ const ViewOneContainer = styled.div`
   }
 `;
 
-const Title = styled.div`
+const Title = styled.h1`
   display: flex;
   align-items: center;
   font-size: 2rem;
@@ -34,6 +34,7 @@ const Title = styled.div`
   -webkit-box-orient: vertical;
   overflow: hidden;
   height: 38px;
+  font-weight: normal;
   p {
     contain: content;
     text-align: center;
@@ -108,13 +109,15 @@ const BackIconContainer = styled.div`
   top: 5px;
 `;
 
-const EditContainer = styled.div`
+const EditButton = styled.button`
   font-size: 1rem;
   color: gray;
   cursor: pointer;
   position: fixed;
   right: 5px;
   top: 5px;
+  border: none;
+  background-color: none;
   p {
     margin: 0;
   }
@@ -179,9 +182,9 @@ const ViewOne = ({ setMode, meal, setMeal, previousMode }) => {
       <Title>
         <p>{checkValid(meal, "title")}</p>
       </Title>
-      <EditContainer>
+      <EditButton>
         <p onClick={() => setMode("edit")}>Edit</p>
-      </EditContainer>
+      </EditButton>
       <PlateAndTextContainer windowHeight={height}>
         <PlateContainer maxWidth={maxWidth}>
           <img src={plateImg} alt="plate" />

@@ -38,7 +38,7 @@ const OuterContainer = styled.div`
   }
 `;
 
-const AddNewContainer = styled.div`
+const AddNewContainer = styled.main`
   background: white;
   display: flex;
   flex-direction: column;
@@ -73,10 +73,11 @@ const InnerContainer = styled.div`
 const TitleInput = styled.div`
   width: 100%;
   height: auto;
+  margin-top: 7px;
   input {
     font-size: 2rem;
     height: 38px;
-    color: gray;
+    color: #545454;
     font-family: "Helvetica Neue";
     background-color: #faf8f8;
     border: none;
@@ -125,7 +126,7 @@ const DescriptionNotesContainer = styled.div`
 const StyledInput = styled.input`
   font-size: 1rem;
   border: none;
-  color: gray;
+  color: #545454;
   background-color: #faf8f8;
   border-radius: 4px;
   height: auto;
@@ -157,7 +158,7 @@ const StyledTextArea = styled.textarea`
   height: auto;
   font-size: 1rem;
   border: none;
-  color: gray;
+  color: #545454;
   margin: 0 15px;
   width: -webkit-fill-available;
   background-color: #faf8f8;
@@ -175,25 +176,27 @@ const StyledTextArea = styled.textarea`
   }
 `;
 
-const SaveButton = styled.div`
+const Button = styled.button`
   cursor: pointer;
   font-size: 1rem;
   position: fixed;
   right: 5px;
   top: 5px;
+  border: none;
+  background-color: none;
+  color: #545454;
+  &.cancel {
+    left: 5px;
+    right: unset;
+  }
 `;
 
-const CancelButton = styled.div`
-  cursor: pointer;
-  font-size: 1rem;
-  position: fixed;
-  left: 5px;
-  top: 5px;
-`;
-
-const DeleteIconContainer = styled.div`
+const DeleteIconButton = styled.button`
   color: red;
+  border: none;
+  background-color: none;
   cursor: pointer;
+  font-size: 16px;
 `;
 
 const PlateContainer = styled.div`
@@ -247,7 +250,7 @@ const FileUploaderButton = styled.label`
   font-size: 40px;
   z-index: 2;
   visibility: ${(props) => props.imageAsFile && "hidden"};
-  color: ${(props) => (props.imageUrl ? "white" : "gray")};
+  color: ${(props) => (props.imageUrl ? "white" : "#545454")};
 `;
 
 const HiddenFileInput = styled.input`
@@ -465,18 +468,23 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
       <AddNewContainer windowHeight={height}>
         {mode === "add" && (
           <>
-            <SaveButton onClick={onSave}>Save</SaveButton>
-            <CancelButton onClick={() => setMode("home")}>Cancel</CancelButton>
+            <Button onClick={onSave}>Save</Button>
+            <Button className="cancel" onClick={() => setMode("home")}>
+              Cancel
+            </Button>
           </>
         )}
         {mode === "edit" && (
           <>
-            <SaveButton onClick={onSave}>Update</SaveButton>
-            <CancelButton onClick={() => setMode("view")}>Cancel</CancelButton>
+            <Button onClick={onSave}>Update</Button>
+            <Button className="cancel" onClick={() => setMode("view")}>
+              Cancel
+            </Button>
           </>
         )}
         <InnerContainer windowHeight={height}>
           <TitleInput>
+            <label for="title" />
             <input
               type="text"
               id="title"
@@ -488,6 +496,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
               defaultValue={mealData.title === "" ? "" : mealData.title}
               placeholder={"Meal"}
               autoComplete="off"
+              aria-label="title"
             />
           </TitleInput>
           <PlateAndControlsContainer>
@@ -502,14 +511,16 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
                 >
                   <FontAwesomeIcon icon={faImage} />{" "}
                 </FileUploaderButton>
+                <label for="image-uploader" />
                 <HiddenFileInput
                   type="file"
-                  id="image"
+                  id="image-uploader"
                   name="image"
                   className="fileinput"
                   onChange={handleImageAsFile}
                   accept={acceptedFileTypes}
                   multiple={false}
+                  aria-label="image-uploader"
                 />
                 <AvatarEditorContainer maxWidth={maxWidth}>
                   <ReactAvatarEditor
@@ -529,6 +540,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
             <ControlsContainer>
               <LabelAndInputContainer>
                 <FontAwesomeIcon icon={faSearchMinus} />
+                <label for="scale" />
                 <input
                   name="scale"
                   id="scale"
@@ -539,11 +551,13 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
                   step="0.01"
                   defaultValue="1"
                   disabled={imageAsFile ? false : true}
+                  aria-label="image scale"
                 />
                 <FontAwesomeIcon icon={faSearchPlus} />
               </LabelAndInputContainer>
               <LabelAndInputContainer>
                 <FontAwesomeIcon icon={faUndoAlt} />
+                <label for="rotation" />
                 <input
                   name="rotation"
                   id="rotation"
@@ -554,6 +568,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
                   step="10"
                   defaultValue={initialRotation}
                   disabled={imageAsFile ? false : true}
+                  aria-label="image rotation"
                 />
                 <FontAwesomeIcon icon={faRedoAlt} />
               </LabelAndInputContainer>
@@ -561,6 +576,7 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
           </PlateAndControlsContainer>
           <DescriptionNotesContainer>
             <form>
+              <label for="description" />
               <StyledInput
                 type="text"
                 id="description"
@@ -573,7 +589,9 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
                 }
                 placeholder="Description"
                 autoComplete="off"
+                aria-label="Description"
               />
+              <label for="notes" />
               <StyledTextArea
                 type="text"
                 id="notes"
@@ -583,7 +601,9 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
                 }
                 defaultValue={mealData.notes === "" ? "" : mealData.notes}
                 placeholder="Notes"
+                aria-label="Notes"
               />
+              <label for="link" />
               <StyledInput
                 type="url"
                 id="link"
@@ -597,13 +617,14 @@ const AddEdit = ({ setMode, meal, mode, setMeal, oneMealId, previousMode }) => {
                 }
                 placeholder="Link"
                 autoComplete="off"
+                aria-label="Link"
               />
             </form>
           </DescriptionNotesContainer>
           {mode === "edit" && (
-            <DeleteIconContainer>
+            <DeleteIconButton aria-label="delete">
               <FontAwesomeIcon icon={faTrashAlt} onClick={() => onDelete()} />
-            </DeleteIconContainer>
+            </DeleteIconButton>
           )}
         </InnerContainer>
       </AddNewContainer>
